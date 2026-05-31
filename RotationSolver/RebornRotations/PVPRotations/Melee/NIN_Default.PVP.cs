@@ -56,6 +56,11 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 
 	protected override bool AttackAbility(IAction nextGCD, out IAction? action)
 	{
+		if (TryUseSeitonTenchu(out action))
+		{
+			return true;
+		}
+
 		if (StatusHelper.PlayerHasStatus(true, StatusID.Hidden_1316))
 		{
 			return base.AttackAbility(nextGCD, out action);
@@ -77,6 +82,61 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 		}
 
 		return base.AttackAbility(nextGCD, out action);
+	}
+
+	private const uint SeitonTenchuPvPActionId = 29515;
+
+	private bool TryUseSeitonTenchu(out IAction? action)
+	{
+		action = null;
+
+		var seitonTenchu = FindSeitonTenchuAction();
+		if (seitonTenchu == null)
+		{
+			return false;
+		}
+
+		List<NinjaPvPLimitBreakTargetSnapshot> snapshots = [];
+		foreach (var hostile in AllHostileTargets)
+		{
+			if (hostile == null || hostile.CurrentHp == 0)
+			{
+				continue;
+			}
+
+			snapshots.Add(new NinjaPvPLimitBreakTargetSnapshot(
+				TargetId: hostile.GameObjectId,
+				HealthRatio: hostile.GetHealthRatio(),
+				DistanceToPlayer: hostile.DistanceToPlayer(),
+				HasRespectedInvulnerability: hostile.HasStatus(false, StatusID.HallowedGround_1302, StatusID.UndeadRedemption)));
+		}
+
+		foreach (var target in NinjaPvPLimitBreakPolicy.Rank(snapshots))
+		{
+			if (PvPSingleTargetActionUse.TryUseOn(
+				seitonTenchu,
+				target.TargetId,
+				new PvPSingleTargetActionOptions(TargetOverride: TargetType.Nearest),
+				out action))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private IBaseAction? FindSeitonTenchuAction()
+	{
+		foreach (var candidate in AllActions)
+		{
+			if (candidate is IBaseAction baseAction && baseAction.ID == SeitonTenchuPvPActionId)
+			{
+				return baseAction;
+			}
+		}
+
+		return null;
 	}
 
 	#endregion

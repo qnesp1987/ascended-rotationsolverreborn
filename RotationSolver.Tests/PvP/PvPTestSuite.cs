@@ -193,5 +193,10 @@ internal static partial class PvPTestSuite
 		new("machinist frontline eagle eye shot accepts wildfire target", MachinistFrontlineEagleEyeShotAcceptsWildfireTarget),
 		new("machinist frontline eagle eye shot accepts guard pressure target", MachinistFrontlineEagleEyeShotAcceptsGuardPressureTarget),
 		new("machinist frontline eagle eye shot secures through guard", MachinistFrontlineEagleEyeShotSecuresThroughGuard),
+		new("ninja seiton tenchu executes low health in range target", NinjaSeitonTenchuExecutesLowHealthInRangeTarget),
+		new("ninja seiton tenchu rejects target at or above threshold", NinjaSeitonTenchuRejectsTargetAtOrAboveThreshold),
+		new("ninja seiton tenchu rejects respected invulnerability", NinjaSeitonTenchuRejectsRespectedInvulnerability),
+		new("ninja seiton tenchu rejects out of range target", NinjaSeitonTenchuRejectsOutOfRangeTarget),
+		new("ninja seiton tenchu prefers nearest executable target", NinjaSeitonTenchuPrefersNearestExecutableTarget),
 	];
 }
