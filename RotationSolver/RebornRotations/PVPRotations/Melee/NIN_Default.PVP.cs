@@ -1,4 +1,5 @@
 ﻿using RotationSolver.Basic.Actions.PvPTargetSelection;
+using ECommons.DalamudServices;
 
 namespace RotationSolver.RebornRotations.PVPRotations.Melee;
 
@@ -86,12 +87,30 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 
 	private const uint SeitonTenchuPvPActionId = 29515;
 
+	// TEMP DEBUG — prints to game chat where the LB attempt stops. Remove after diagnosis.
+	private static string? _ninLbTrace;
+	private static void NinLbTrace(string msg)
+	{
+		if (_ninLbTrace == msg)
+		{
+			return;
+		}
+		_ninLbTrace = msg;
+		Svc.Chat.Print($"[NIN-LB] {msg}");
+	}
+
 	private bool TryUseSeitonTenchu(bool isGcdPass, out IAction? action)
 	{
 		action = null;
 
 		var seitonTenchu = FindSeitonTenchuAction();
-		if (seitonTenchu == null || seitonTenchu.Info.IsRealGCD != isGcdPass)
+		if (seitonTenchu == null)
+		{
+			NinLbTrace("action NOT FOUND in the rotation's action list");
+			return false;
+		}
+
+		if (seitonTenchu.Info.IsRealGCD != isGcdPass)
 		{
 			return false;
 		}
@@ -111,7 +130,14 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 				HasRespectedInvulnerability: hostile.HasStatus(false, StatusID.HallowedGround_1302, StatusID.UndeadRedemption)));
 		}
 
-		foreach (var target in NinjaPvPLimitBreakPolicy.Rank(snapshots))
+		var ranked = NinjaPvPLimitBreakPolicy.Rank(snapshots);
+		if (ranked.Count == 0)
+		{
+			NinLbTrace($"found (gcd={seitonTenchu.Info.IsRealGCD}); no eligible target (need <35% HP within 15y, not LB-invuln)");
+			return false;
+		}
+
+		foreach (var target in ranked)
 		{
 			if (PvPSingleTargetActionUse.TryUseOn(
 				seitonTenchu,
@@ -119,10 +145,12 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 				new PvPSingleTargetActionOptions(TargetOverride: TargetType.Nearest),
 				out action))
 			{
+				NinLbTrace($"FIRING (gcd={seitonTenchu.Info.IsRealGCD})");
 				return true;
 			}
 		}
 
+		NinLbTrace($"eligible target found, but the game REFUSED it (CanUse=false, gcd={seitonTenchu.Info.IsRealGCD})");
 		return false;
 	}
 
