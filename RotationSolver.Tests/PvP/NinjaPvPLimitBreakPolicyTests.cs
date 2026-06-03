@@ -52,7 +52,7 @@ internal static partial class PvPTestSuite
 	{
 		var far = NinjaLimitBreakTarget(1, healthRatio: 0.10f, distanceToPlayer: 12f);
 		var near = NinjaLimitBreakTarget(2, healthRatio: 0.20f, distanceToPlayer: 3f);
-		var outOfRange = NinjaLimitBreakTarget(3, healthRatio: 0.05f, distanceToPlayer: 15f);
+		var outOfRange = NinjaLimitBreakTarget(3, healthRatio: 0.05f, distanceToPlayer: 18f);
 
 		var ranked = NinjaPvPLimitBreakPolicy.Rank([far, near, outOfRange]);
 
