@@ -43,14 +43,14 @@ internal static partial class PvPTestSuite
 
 	static void NinjaSeitonTenchuRejectsOutOfRangeTarget()
 	{
-		var target = NinjaLimitBreakTarget(1, healthRatio: 0.10f, distanceToPlayer: 12f);
+		var target = NinjaLimitBreakTarget(1, healthRatio: 0.10f, distanceToPlayer: 18f);
 
-		AssertFalse(NinjaPvPLimitBreakPolicy.ShouldExecute(target), "Seiton Tenchu should respect the 10y management range");
+		AssertFalse(NinjaPvPLimitBreakPolicy.ShouldExecute(target), "Seiton Tenchu should respect the 15y management range");
 	}
 
 	static void NinjaSeitonTenchuPrefersNearestExecutableTarget()
 	{
-		var far = NinjaLimitBreakTarget(1, healthRatio: 0.10f, distanceToPlayer: 9f);
+		var far = NinjaLimitBreakTarget(1, healthRatio: 0.10f, distanceToPlayer: 12f);
 		var near = NinjaLimitBreakTarget(2, healthRatio: 0.20f, distanceToPlayer: 3f);
 		var outOfRange = NinjaLimitBreakTarget(3, healthRatio: 0.05f, distanceToPlayer: 15f);
 

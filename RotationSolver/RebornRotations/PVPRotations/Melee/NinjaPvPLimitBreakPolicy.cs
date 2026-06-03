@@ -9,7 +9,7 @@ internal readonly record struct NinjaPvPLimitBreakTargetSnapshot(
 internal static class NinjaPvPLimitBreakPolicy
 {
 	internal const float ExecuteHealthRatioThreshold = 0.35f;
-	internal const float LimitBreakRangeYalms = 10f;
+	internal const float LimitBreakRangeYalms = 15f;
 
 	internal static NinjaPvPLimitBreakTargetSnapshot? SelectBest(
 		IReadOnlyList<NinjaPvPLimitBreakTargetSnapshot> targets)

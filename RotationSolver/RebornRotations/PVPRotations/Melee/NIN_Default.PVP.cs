@@ -20,6 +20,11 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 	#region oGCDs
 	protected override bool EmergencyAbility(IAction nextGCD, out IAction? action)
 	{
+		if (TryUseSeitonTenchu(isGcdPass: false, out action))
+		{
+			return true;
+		}
+
 		if (StatusHelper.PlayerHasStatus(true, StatusID.Hidden_1316))
 		{
 			return base.EmergencyAbility(nextGCD, out action);
@@ -56,11 +61,6 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 
 	protected override bool AttackAbility(IAction nextGCD, out IAction? action)
 	{
-		if (TryUseSeitonTenchu(out action))
-		{
-			return true;
-		}
-
 		if (StatusHelper.PlayerHasStatus(true, StatusID.Hidden_1316))
 		{
 			return base.AttackAbility(nextGCD, out action);
@@ -86,12 +86,12 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 
 	private const uint SeitonTenchuPvPActionId = 29515;
 
-	private bool TryUseSeitonTenchu(out IAction? action)
+	private bool TryUseSeitonTenchu(bool isGcdPass, out IAction? action)
 	{
 		action = null;
 
 		var seitonTenchu = FindSeitonTenchuAction();
-		if (seitonTenchu == null)
+		if (seitonTenchu == null || seitonTenchu.Info.IsRealGCD != isGcdPass)
 		{
 			return false;
 		}
@@ -144,6 +144,11 @@ public sealed class NIN_DefaultPvP : NinjaRotation
 	#region GCDs
 	protected override bool GeneralGCD(out IAction? action)
 	{
+		if (TryUseSeitonTenchu(isGcdPass: true, out action))
+		{
+			return true;
+		}
+
 		if (HasHidden)
 		{
 			return AssassinatePvP.CanUse(out action);
