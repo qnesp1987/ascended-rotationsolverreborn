@@ -3389,7 +3389,7 @@ public partial class RotationConfigWindow : Window
 					return new MovementSafetyResult { Status = MovementSafetyStatus.NotSafe, Reason = "Unknown movement type" };
 			}
 		}
-			catch (Exception ex)
+		catch (Exception ex)
 		{
 			return new MovementSafetyResult { Status = MovementSafetyStatus.NotSafe, Reason = $"Error: {ex.Message}" };
 		}

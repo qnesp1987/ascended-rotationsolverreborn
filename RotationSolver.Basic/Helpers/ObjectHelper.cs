@@ -178,6 +178,18 @@ public static class ObjectHelper
 			return false;
 		}
 
+		// If the mob is owned by a party member it belongs to our party and is a valid target.
+		if (Player.Object != null && battleChara.OwnerId != 0)
+		{
+			foreach (var p in Svc.Party)
+			{
+				if (p.GameObject?.GameObjectId == battleChara.OwnerId)
+				{
+					return false;
+				}
+			}
+		}
+
 		// SpecialType but no NamePlateIcon — check whether the mob's event type matches one of the
 		// player-owned content directors that can produce mobs belonging to OTHER players.
 		var ev = battleChara.GetEventType();

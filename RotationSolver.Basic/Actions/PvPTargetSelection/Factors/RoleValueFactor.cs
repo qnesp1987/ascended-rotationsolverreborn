@@ -7,13 +7,13 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
 /// </summary>
 public static class RoleValueFactor
 {
-    public static double Compute(JobRole role) => role switch
-    {
-        JobRole.Healer         => 1.00,
-        JobRole.RangedMagical  => 0.90,
-        JobRole.RangedPhysical => 0.80,
-        JobRole.Melee          => 0.55,
-        JobRole.Tank           => 0.30,
-        _                      => 0.00,
-    };
+	public static double Compute(JobRole role) => role switch
+	{
+		JobRole.Healer => 1.00,
+		JobRole.RangedMagical => 0.90,
+		JobRole.RangedPhysical => 0.80,
+		JobRole.Melee => 0.55,
+		JobRole.Tank => 0.30,
+		_ => 0.00,
+	};
 }

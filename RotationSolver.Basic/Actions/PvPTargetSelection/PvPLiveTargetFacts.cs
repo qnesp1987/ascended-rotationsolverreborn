@@ -18,23 +18,23 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// <param name="IsInNormalRange">Whether the target is inside the caller's action range.</param>
 /// <param name="GuardAvailability">Caller-supplied Guard cooldown inference for this target.</param>
 public readonly record struct PvPLiveTargetFacts(
-    ulong TargetId,
-    float HealthRatio,
-    uint CurrentMp,
-    bool HasGuard,
-    bool HasResilience,
-    bool IsObjectiveRelevant,
-    int AllyFocusCount,
-    bool HasNonGuardInvulnerability,
-    double EffectiveHealthRatio,
-    double GuardPiercingEffectiveHealthRatio,
-    double ActiveDamageReduction,
-    bool IsExposed,
-    bool IsInNormalRange,
-    PvPGuardAvailability GuardAvailability)
+	ulong TargetId,
+	float HealthRatio,
+	uint CurrentMp,
+	bool HasGuard,
+	bool HasResilience,
+	bool IsObjectiveRelevant,
+	int AllyFocusCount,
+	bool HasNonGuardInvulnerability,
+	double EffectiveHealthRatio,
+	double GuardPiercingEffectiveHealthRatio,
+	double ActiveDamageReduction,
+	bool IsExposed,
+	bool IsInNormalRange,
+	PvPGuardAvailability GuardAvailability)
 {
-    /// <summary>
-    /// Whether any caller-supplied ally snapshot targets this target.
-    /// </summary>
-    public bool HasAllyFocus => AllyFocusCount > 0;
+	/// <summary>
+	/// Whether any caller-supplied ally snapshot targets this target.
+	/// </summary>
+	public bool HasAllyFocus => AllyFocusCount > 0;
 }

@@ -20,17 +20,17 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 // All call sites construct this with named arguments, never positional. With 14 fields
 // silently swapping values would be undetectable; the named-args discipline is load-bearing.
 public readonly record struct ScoreBreakdown(
-    double Role,
-    double Finish,
-    double Mitigation,
-    double Distance,
-    double Sticky,
-    double Carrier,
-    double LB,
-    double Isolation,
-    double Threat,
-    double MpPressure,
-    double Resilience,
-    double Objective,
-    bool Invuln,
-    double Total);
+	double Role,
+	double Finish,
+	double Mitigation,
+	double Distance,
+	double Sticky,
+	double Carrier,
+	double LB,
+	double Isolation,
+	double Threat,
+	double MpPressure,
+	double Resilience,
+	double Objective,
+	bool Invuln,
+	double Total);

@@ -7,14 +7,14 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
 /// </summary>
 public static class FinishFactor
 {
-    private const double SlopeK = 0.005;
+	private const double SlopeK = 0.005;
 
-    public static double Compute(double effectiveHp, double midpoint)
-    {
-        if (double.IsInfinity(effectiveHp)) return 0.0;
-        // Guard against midpoint == 0: clamp the effective midpoint to 1 to avoid 0/0 cases.
-        var safeMidpoint = midpoint > 0.0 ? midpoint : 1.0;
-        var exponent = SlopeK * (effectiveHp - safeMidpoint);
-        return 1.0 / (1.0 + Math.Exp(exponent));
-    }
+	public static double Compute(double effectiveHp, double midpoint)
+	{
+		if (double.IsInfinity(effectiveHp)) return 0.0;
+		// Guard against midpoint == 0: clamp the effective midpoint to 1 to avoid 0/0 cases.
+		var safeMidpoint = midpoint > 0.0 ? midpoint : 1.0;
+		var exponent = SlopeK * (effectiveHp - safeMidpoint);
+		return 1.0 / (1.0 + Math.Exp(exponent));
+	}
 }

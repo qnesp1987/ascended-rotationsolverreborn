@@ -14,32 +14,32 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// </summary>
 public static class PvPScoringContextBuilder
 {
-    /// <summary>
-    /// Effective range used by the distance-penalty factor. Centralized here so the
-    /// production scorer and the debug overlay agree on the cutoff; tuning the value
-    /// in one place updates both call sites.
-    /// </summary>
-    public const float DefaultEffectiveRangeYalms = 25f;
+	/// <summary>
+	/// Effective range used by the distance-penalty factor. Centralized here so the
+	/// production scorer and the debug overlay agree on the cutoff; tuning the value
+	/// in one place updates both call sites.
+	/// </summary>
+	public const float DefaultEffectiveRangeYalms = 25f;
 
-    /// <summary>
-    /// Build a fresh <see cref="ScoringContext"/> snapshot for the current frame.
-    /// </summary>
-    public static ScoringContext BuildCurrent(IReadOnlyList<IBattleChara> hostiles)
-    {
-        var preset = Service.Config.PvPScoringPreset;
-        var weights = preset == ScoringPreset.Custom
-            ? Service.Config.PvPScoringWeights
-            : ScoringWeights.ForPreset(preset);
+	/// <summary>
+	/// Build a fresh <see cref="ScoringContext"/> snapshot for the current frame.
+	/// </summary>
+	public static ScoringContext BuildCurrent(IReadOnlyList<IBattleChara> hostiles)
+	{
+		var preset = Service.Config.PvPScoringPreset;
+		var weights = preset == ScoringPreset.Custom
+			? Service.Config.PvPScoringWeights
+			: ScoringWeights.ForPreset(preset);
 
-        return new ScoringContext(
-            Weights: weights,
-            MitigationDatabase: PvPMitigationDatabaseProvider.Current,
-            LBDatabase: PvPLBDatabaseProvider.Current,
-            PreviousTargetId: DataCenter.LastPvPSmartTargetId,
-            CrystalCarrierObjectId: CrystalCarrierState.GetCurrentCarrierId(),
-            Hostiles: hostiles,
-            ThreatenedAllyIds: ThreatenedAllyState.BuildThreatenedAllyIds(),
-            ObjectiveRelevantTargetIds: PvPObjectiveState.BuildObjectiveRelevantTargetIds(),
-            EffectiveRangeYalms: DefaultEffectiveRangeYalms);
-    }
+		return new ScoringContext(
+			Weights: weights,
+			MitigationDatabase: PvPMitigationDatabaseProvider.Current,
+			LBDatabase: PvPLBDatabaseProvider.Current,
+			PreviousTargetId: DataCenter.LastPvPSmartTargetId,
+			CrystalCarrierObjectId: CrystalCarrierState.GetCurrentCarrierId(),
+			Hostiles: hostiles,
+			ThreatenedAllyIds: ThreatenedAllyState.BuildThreatenedAllyIds(),
+			ObjectiveRelevantTargetIds: PvPObjectiveState.BuildObjectiveRelevantTargetIds(),
+			EffectiveRangeYalms: DefaultEffectiveRangeYalms);
+	}
 }

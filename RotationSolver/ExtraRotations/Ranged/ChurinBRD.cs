@@ -34,10 +34,10 @@ public sealed class ChurinBRD : BardRotation
 	#endregion
 
 	#region Constants
-	private const float SongMaxDuration             = 45f;
-	private const float DoTEndBuffer                = 0.5f;
+	private const float SongMaxDuration = 45f;
+	private const float DoTEndBuffer = 0.5f;
 	private const float ArmyHeartbreakHoldThreshold = 30f;
-	private const float SidewinderBuffLookahead     = 10f;
+	private const float SidewinderBuffLookahead = 10f;
 	#endregion
 
 	#region Song Timings
@@ -51,9 +51,9 @@ public sealed class ChurinBRD : BardRotation
 		SongTimings switch
 		{
 			SongTiming.Standard or SongTiming.AdjustedStandard => standard,
-			SongTiming.Cycle369                                 => cycle369,
-			SongTiming.Custom                                   => custom,
-			_                                                   => 0f
+			SongTiming.Cycle369 => cycle369,
+			SongTiming.Custom => custom,
+			_ => 0f
 		};
 	private float WandTime => GetSongUptime(42f, 42f, CustomWandTime);
 	private float MageTime => GetSongUptime(42f, 39f, CustomMageTime);
@@ -115,10 +115,10 @@ public sealed class ChurinBRD : BardRotation
 	}
 
 	private bool BurstEndGCD(uint gcdCount) => StatusHelper.PlayerHasStatus(true, BurstStatus)
-	                                           && StatusHelper.PlayerWillStatusEndGCD(gcdCount, DataCenter.CalculatedActionAhead, true, BurstStatus);
+											   && StatusHelper.PlayerWillStatusEndGCD(gcdCount, DataCenter.CalculatedActionAhead, true, BurstStatus);
 	private static bool CanUseEnhancedFiller => HasBarrage || HasHawksEye;
 	private static bool IsMedicated => StatusHelper.PlayerHasStatus(true, StatusID.Medicated) &&
-	                                   !StatusHelper.PlayerWillStatusEnd(0f, true, StatusID.Medicated);
+									   !StatusHelper.PlayerWillStatusEnd(0f, true, StatusID.Medicated);
 	private static bool InOddMinuteWindow => InMages && SongTime > 15f;
 	private static float WeaponAhead => WeaponRemain + DataCenter.CalculatedActionAhead;
 
@@ -170,8 +170,8 @@ public sealed class ChurinBRD : BardRotation
 	private static bool TargetHasDoT(IBaseAction action)
 	{
 		return CurrentTarget != null
-		       && action.Setting.TargetStatusProvide != null
-		       && CurrentTarget.HasStatus(true, action.Setting.TargetStatusProvide);
+			   && action.Setting.TargetStatusProvide != null
+			   && CurrentTarget.HasStatus(true, action.Setting.TargetStatusProvide);
 	}
 
 	private static bool TargetIsBoss
@@ -182,7 +182,7 @@ public sealed class ChurinBRD : BardRotation
 
 
 			return CurrentTarget.IsBossFromIcon()
-			       || CurrentTarget.IsBossFromTTK();
+				   || CurrentTarget.IsBossFromTTK();
 		}
 	}
 
@@ -309,9 +309,9 @@ public sealed class ChurinBRD : BardRotation
 
 		IAction? act;
 		if (SongTimings == SongTiming.AdjustedStandard
-		    && remainTime <= 0f)
+			&& remainTime <= 0f)
 		{
-			 if (HeartbreakShotPvE.CanUse(out act)) return act;
+			if (HeartbreakShotPvE.CanUse(out act)) return act;
 		}
 
 		if (Is369 && EnablePrepullHeartbreakShot && remainTime < 1.65f && HeartbreakShotPvE.CanUse(out act))
@@ -319,7 +319,7 @@ public sealed class ChurinBRD : BardRotation
 			return act;
 		}
 
-		return  remainTime <= 0.1f && TryUseDoTs(out act) ? act : base.CountDownAction(remainTime);
+		return remainTime <= 0.1f && TryUseDoTs(out act) ? act : base.CountDownAction(remainTime);
 	}
 
 	#endregion
@@ -335,7 +335,7 @@ public sealed class ChurinBRD : BardRotation
 
 		if (!CanWeave) return false;
 		return TryUseEmpyrealArrow(out act)
-		       || TryUseBarrage(out act)
+			   || TryUseBarrage(out act)
 			   || TryUsePitchPerfect(out act)
 			   || base.EmergencyAbility(nextGCD, out act);
 	}
@@ -369,9 +369,9 @@ public sealed class ChurinBRD : BardRotation
 		if (TryUseDoTs(out act)) return true;
 		if (TryUseBurst(out act)) return true;
 		if (TryUseApexArrow(out act)
-		    ||TryUseBlastArrow(out act)) return true;
-		return  TryUseFiller(out act)
-		        || base.GeneralGCD(out act);
+			|| TryUseBlastArrow(out act)) return true;
+		return TryUseFiller(out act)
+				|| base.GeneralGCD(out act);
 	}
 
 	#endregion
@@ -409,9 +409,9 @@ public sealed class ChurinBRD : BardRotation
 	private static bool DoTsEnding(IBaseAction action)
 	{
 		return CurrentTarget != null
-		       && TargetHasDoT(action)
-		       && action.Setting.TargetStatusProvide != null
-		       && CurrentTarget.WillStatusEndGCD(1, DoTEndBuffer, true, action.Setting.TargetStatusProvide);
+			   && TargetHasDoT(action)
+			   && action.Setting.TargetStatusProvide != null
+			   && CurrentTarget.WillStatusEndGCD(1, DoTEndBuffer, true, action.Setting.TargetStatusProvide);
 	}
 
 	private bool CanDoTMobs => !DoTsBoss || TargetIsBoss;
@@ -448,15 +448,15 @@ public sealed class ChurinBRD : BardRotation
 
 		if (!TargetHasDoT(CausticBite) && CausticBite.CanUse(out act, true)) return true;
 
-		var stormEnding   = DoTsEnding(Stormbite);
+		var stormEnding = DoTsEnding(Stormbite);
 		var causticEnding = DoTsEnding(CausticBite);
 
 		if (!stormEnding && !causticEnding) return false;
 
 		if (!IronJawsPvE.EnoughLevel)
 		{
-			return stormEnding  && Stormbite.CanUse(out act, true)
-			       || causticEnding && CausticBite.CanUse(out act, true);
+			return stormEnding && Stormbite.CanUse(out act, true)
+				   || causticEnding && CausticBite.CanUse(out act, true);
 		}
 
 		return false;
@@ -595,7 +595,7 @@ public sealed class ChurinBRD : BardRotation
 			if (WeaponRemain <= DataCenter.CalculatedActionAhead + Math.Max(AnimationLock, 0.6f)) return false;
 
 			if (!EmpyrealArrowPvE.Cooldown.IsCoolingDown
-			    || EmpyrealArrowPvE.Cooldown.HasOneCharge)
+				|| EmpyrealArrowPvE.Cooldown.HasOneCharge)
 			{
 				return CanWeave;
 			}
@@ -614,26 +614,26 @@ public sealed class ChurinBRD : BardRotation
 	{
 		get
 		{
-            if (IsStandardTiming)
-            {
-	            return true;
-            }
+			if (IsStandardTiming)
+			{
+				return true;
+			}
 
-            if (!Is369)
-            {
-	            return false;
-            }
+			if (!Is369)
+			{
+				return false;
+			}
 
-            if (InWanderers)
-            {
-	            return InBurst || RagingStrikesPvE.Cooldown.IsCoolingDown;
-            }
-            if (InMages)
-            {
-	            return IsFirstCycle ? EnoughWeaveTime : !SongEndAfter(MageRemainTime);
-            }
+			if (InWanderers)
+			{
+				return InBurst || RagingStrikesPvE.Cooldown.IsCoolingDown;
+			}
+			if (InMages)
+			{
+				return IsFirstCycle ? EnoughWeaveTime : !SongEndAfter(MageRemainTime);
+			}
 
-            return InArmys && EnoughWeaveTime;
+			return InArmys && EnoughWeaveTime;
 		}
 	}
 
@@ -721,9 +721,9 @@ public sealed class ChurinBRD : BardRotation
 			if (InWanderers && ShouldSwapSong)
 			{
 				return (Repertoire == 0
-				       || IsLastAbility(ActionID.PitchPerfectPvE)
-				       || !HasHostilesInMaxRange
-				       || EnableSandbagMode) && CanLateWeave;
+					   || IsLastAbility(ActionID.PitchPerfectPvE)
+					   || !HasHostilesInMaxRange
+					   || EnableSandbagMode) && CanLateWeave;
 			}
 
 			if (InArmys && ShouldSwapSong) return TheWanderersMinuetPvE.Cooldown.IsCoolingDown;
@@ -759,7 +759,7 @@ public sealed class ChurinBRD : BardRotation
 			if (IsFirstCycle)
 			{
 				return CanLateWeave
-				       || IsLastAbility(ActionID.EmpyrealArrowPvE);
+					   || IsLastAbility(ActionID.EmpyrealArrowPvE);
 			}
 			return EnoughWeaveTime;
 		}
@@ -799,16 +799,16 @@ public sealed class ChurinBRD : BardRotation
 
 			if (IsStandardTiming)
 			{
-				return  IsFirstCycle
+				return IsFirstCycle
 					? HasBattleVoice
 					: ElapsedIsMoreThanGCD(TheWanderersMinuetPvE) && RecastIsLessThanGCD(BattleVoicePvE);
 			}
 
 			return Is369
-			       && (IsFirstCycle
-				       ? !WouldUseDoTs && CanLateWeave
-				       : ElapsedIsMoreThanGCD(TheWanderersMinuetPvE) && RecastIsLessThanGCD(BattleVoicePvE) && CanEarlyWeave
-				       );
+				   && (IsFirstCycle
+					   ? !WouldUseDoTs && CanLateWeave
+					   : ElapsedIsMoreThanGCD(TheWanderersMinuetPvE) && RecastIsLessThanGCD(BattleVoicePvE) && CanEarlyWeave
+					   );
 		}
 	}
 
@@ -827,15 +827,15 @@ public sealed class ChurinBRD : BardRotation
 			if (!InWanderers && !CanBurstChanged) return false;
 			if (IsStandardTiming)
 			{
-				return  CanLateWeave
+				return CanLateWeave
 					&& (IsFirstCycle
 						? !HasRadiantFinale
 						: HasRadiantFinale || IsLastAbility(ActionID.RadiantFinalePvE));
 			}
 			return Is369
-			       && (IsFirstCycle
-			       ? !WouldUseDoTs && HasRadiantFinale && CanEarlyWeave
-			       : HasRadiantFinale && CanLateWeave);
+				   && (IsFirstCycle
+				   ? !WouldUseDoTs && HasRadiantFinale && CanEarlyWeave
+				   : HasRadiantFinale && CanLateWeave);
 		}
 	}
 
@@ -884,17 +884,17 @@ public sealed class ChurinBRD : BardRotation
 		if (IsInSandbagMode || !CanWeave || !EnoughWeaveTime) return false;
 
 		var willHaveMaxCharges = HeartbreakShotPvE.Cooldown.WillHaveXCharges(BloodletterMax, 5);
-		var willHaveOneCharge  = HeartbreakShotPvE.Cooldown.WillHaveOneCharge(5);
-		var wontHaveCharge     = HeartbreakShotPvE.Cooldown.IsCoolingDown
-		                         && !HeartbreakShotPvE.Cooldown.WillHaveOneCharge(WeaponAhead)
-		                         && WeaponElapsed <= 1f;
+		var willHaveOneCharge = HeartbreakShotPvE.Cooldown.WillHaveOneCharge(5);
+		var wontHaveCharge = HeartbreakShotPvE.Cooldown.IsCoolingDown
+								 && !HeartbreakShotPvE.Cooldown.WillHaveOneCharge(WeaponAhead)
+								 && WeaponElapsed <= 1f;
 
 		var holdForRagingOrCap = (!InBurst || !HasRagingStrikes)
 			&& BloodletterPvE.Cooldown.CurrentCharges < 3
 			&& !willHaveMaxCharges;
 		var holdForBurstTiming = InBurst
 			&& (!willHaveOneCharge || !CanWeave);
-		var isInWanderersHold  = InWanderers && (holdForRagingOrCap || holdForBurstTiming);
+		var isInWanderersHold = InWanderers && (holdForRagingOrCap || holdForBurstTiming);
 
 		var isInArmysHold = InArmys
 			&& SongTime <= ArmyHeartbreakHoldThreshold
@@ -905,7 +905,7 @@ public sealed class ChurinBRD : BardRotation
 
 		var isEmpyrealBlocking = !NoSong && !InBurst
 			&& (EmpyrealArrowPvE.Cooldown.WillHaveOneCharge(WeaponTotal) && CanUseEmpyrealArrow
-			    || wontHaveCharge);
+				|| wontHaveCharge);
 
 		if (isInWanderersHold || isInArmysHold || isInMagesHold || isEmpyrealBlocking) return false;
 
@@ -935,7 +935,7 @@ public sealed class ChurinBRD : BardRotation
 		if (!EnoughWeaveTime || !SidewinderPvE.CanUse(out act)) return false;
 
 		var noBurstIncoming = !rFWillHaveCharge && !bVWillHaveCharge && RagingStrikesPvE.Cooldown.IsCoolingDown;
-		var rsExpiring      = RagingStrikesPvE.Cooldown.IsCoolingDown && !HasRagingStrikes;
+		var rsExpiring = RagingStrikesPvE.Cooldown.IsCoolingDown && !HasRagingStrikes;
 		return InBurst || !RadiantFinalePvE.EnoughLevel || noBurstIncoming || rsExpiring;
 	}
 
@@ -969,8 +969,8 @@ public sealed class ChurinBRD : BardRotation
 		  && BattleVoicePvE.Cooldown.IsCoolingDown
 		  && RagingStrikesPvE.Cooldown.IsCoolingDown)
 		 || (!IsFirstCycle
-		     && !BattleVoicePvE.Cooldown.HasOneCharge
-		     && !RagingStrikesPvE.Cooldown.HasOneCharge));
+			 && !BattleVoicePvE.Cooldown.HasOneCharge
+			 && !RagingStrikesPvE.Cooldown.HasOneCharge));
 
 	/// <summary>
 	/// BRD-specific potion manager that extends base potion logic with job-specific conditions.
@@ -1024,21 +1024,21 @@ public sealed class ChurinBRD : BardRotation
 	#region Tracking Properties
 
 	public override void DisplayRotationStatus()
-              	{
-              		ImGui.Text("===GCD Status===");
-              		ImGui.Text($"Weapon Remain: {WeaponRemain}");
-	                ImGui.Text($"Weapon Elapsed {WeaponElapsed}");
-	                ImGui.Text($"Calculated Action Ahead {DataCenter.CalculatedActionAhead}");
-	                ImGui.Text($"Can Weave {CanWeave}");
-              		ImGui.Text($"Enough Weave Time: {EnoughWeaveTime}");
-	                ImGui.Text($"Late Weave Window: {LateWeaveWindow}");
-              		ImGui.Text($"Can Late Weave: {CanLateWeave}");
-              		ImGui.Text($"Can Early Weave: {CanEarlyWeave}");
-					ImGui.Text($"Empyreal Arrow Recast Remain: {EmpyrealArrowPvE.Cooldown.RecastTimeRemain} - {WeaponRemain} = {Math.Abs(EmpyrealArrowPvE.Cooldown.RecastTimeRemain - WeaponRemain)}");
-	                ImGui.Text($"Target Has Stormbite: {TargetHasDoT(Stormbite)}");
-	                ImGui.Text($"Target Has Caustic Bite: {TargetHasDoT(CausticBite)}");
-			  		ImGui.Text($"In Burst: {InBurst}");
-              	}
+	{
+		ImGui.Text("===GCD Status===");
+		ImGui.Text($"Weapon Remain: {WeaponRemain}");
+		ImGui.Text($"Weapon Elapsed {WeaponElapsed}");
+		ImGui.Text($"Calculated Action Ahead {DataCenter.CalculatedActionAhead}");
+		ImGui.Text($"Can Weave {CanWeave}");
+		ImGui.Text($"Enough Weave Time: {EnoughWeaveTime}");
+		ImGui.Text($"Late Weave Window: {LateWeaveWindow}");
+		ImGui.Text($"Can Late Weave: {CanLateWeave}");
+		ImGui.Text($"Can Early Weave: {CanEarlyWeave}");
+		ImGui.Text($"Empyreal Arrow Recast Remain: {EmpyrealArrowPvE.Cooldown.RecastTimeRemain} - {WeaponRemain} = {Math.Abs(EmpyrealArrowPvE.Cooldown.RecastTimeRemain - WeaponRemain)}");
+		ImGui.Text($"Target Has Stormbite: {TargetHasDoT(Stormbite)}");
+		ImGui.Text($"Target Has Caustic Bite: {TargetHasDoT(CausticBite)}");
+		ImGui.Text($"In Burst: {InBurst}");
+	}
 
 	#endregion
 }

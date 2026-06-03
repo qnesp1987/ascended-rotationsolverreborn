@@ -17,14 +17,14 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// <param name="CheckActionManager">Preserves whether the caller requires the game action manager check.</param>
 /// <param name="TargetOverride">Preserves the caller's target selection override while the exact target predicate is active.</param>
 public readonly record struct PvPSingleTargetActionOptions(
-    bool SkipStatusProvideCheck = false,
-    bool SkipStatusNeed = false,
-    bool SkipTargetStatusNeedCheck = false,
-    bool SkipComboCheck = false,
-    bool SkipCastingCheck = false,
-    bool UsedUp = false,
-    bool SkipAoeCheck = false,
-    bool SkipTtkCheck = false,
-    byte GcdCountForAbility = 0,
-    bool CheckActionManager = false,
-    TargetType TargetOverride = default);
+	bool SkipStatusProvideCheck = false,
+	bool SkipStatusNeed = false,
+	bool SkipTargetStatusNeedCheck = false,
+	bool SkipComboCheck = false,
+	bool SkipCastingCheck = false,
+	bool UsedUp = false,
+	bool SkipAoeCheck = false,
+	bool SkipTtkCheck = false,
+	byte GcdCountForAbility = 0,
+	bool CheckActionManager = false,
+	TargetType TargetOverride = default);

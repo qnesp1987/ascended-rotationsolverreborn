@@ -8,18 +8,18 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// </summary>
 public static class PvPObjectiveState
 {
-    /// <summary>
-    /// Return hostile ids that have a verified objective role in the current frame.
-    /// Empty output is intentional while carrier detection remains unverified.
-    /// </summary>
-    public static IReadOnlySet<ulong> BuildObjectiveRelevantTargetIds()
-    {
-        var carrierId = CrystalCarrierState.GetCurrentCarrierId();
-        if (carrierId is null)
-        {
-            return FrozenSet<ulong>.Empty;
-        }
+	/// <summary>
+	/// Return hostile ids that have a verified objective role in the current frame.
+	/// Empty output is intentional while carrier detection remains unverified.
+	/// </summary>
+	public static IReadOnlySet<ulong> BuildObjectiveRelevantTargetIds()
+	{
+		var carrierId = CrystalCarrierState.GetCurrentCarrierId();
+		if (carrierId is null)
+		{
+			return FrozenSet<ulong>.Empty;
+		}
 
-        return new[] { carrierId.Value }.ToFrozenSet();
-    }
+		return new[] { carrierId.Value }.ToFrozenSet();
+	}
 }

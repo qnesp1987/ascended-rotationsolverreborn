@@ -105,7 +105,7 @@ public partial class BardRotation
 	/// <summary>
 	/// Able to execute Radiant Finale.
 	/// </summary>
-	public static bool HasRadiantFinale => StatusHelper.PlayerHasStatus(true, StatusID.RadiantFinale);
+	public static bool HasRadiantFinale => StatusHelper.PlayerHasStatus(true, StatusID.RadiantFinale_2964, StatusID.RadiantFinale);
 
 	/// <summary>
 	///

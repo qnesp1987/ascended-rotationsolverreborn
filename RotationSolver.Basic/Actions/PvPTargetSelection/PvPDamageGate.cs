@@ -6,36 +6,36 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// </summary>
 public static class PvPDamageGate
 {
-    private const double HeavyDamageReduction = 0.30;
+	private const double HeavyDamageReduction = 0.30;
 
-    /// <summary>
-    /// Evaluates whether a PvP damage action should be spent into the target's
-    /// current defensive state.
-    /// </summary>
-    public static PvPBurstRecommendation Evaluate(PvPDamageGateInput input)
-    {
-        if (input.HasInvulnerability || double.IsPositiveInfinity(input.EffectiveHpRatio))
-        {
-            return PvPBurstRecommendation.Hold;
-        }
+	/// <summary>
+	/// Evaluates whether a PvP damage action should be spent into the target's
+	/// current defensive state.
+	/// </summary>
+	public static PvPBurstRecommendation Evaluate(PvPDamageGateInput input)
+	{
+		if (input.HasInvulnerability || double.IsPositiveInfinity(input.EffectiveHpRatio))
+		{
+			return PvPBurstRecommendation.Hold;
+		}
 
-        if (input.ExpectedDamageRatio > 0.0 && input.EffectiveHpRatio <= input.ExpectedDamageRatio)
-        {
-            return PvPBurstRecommendation.Secure;
-        }
+		if (input.ExpectedDamageRatio > 0.0 && input.EffectiveHpRatio <= input.ExpectedDamageRatio)
+		{
+			return PvPBurstRecommendation.Secure;
+		}
 
-        if (input.Intent == PvPBurstIntent.Secure)
-        {
-            return PvPBurstRecommendation.Hold;
-        }
+		if (input.Intent == PvPBurstIntent.Secure)
+		{
+			return PvPBurstRecommendation.Hold;
+		}
 
-        if (input.ActiveDamageReduction >= HeavyDamageReduction && !input.HasPrioritySignal)
-        {
-            return PvPBurstRecommendation.Hold;
-        }
+		if (input.ActiveDamageReduction >= HeavyDamageReduction && !input.HasPrioritySignal)
+		{
+			return PvPBurstRecommendation.Hold;
+		}
 
-        return PvPBurstRecommendation.Spend;
-    }
+		return PvPBurstRecommendation.Spend;
+	}
 }
 
 /// <summary>
@@ -43,9 +43,9 @@ public static class PvPDamageGate
 /// Ratios are expressed relative to the target's maximum HP.
 /// </summary>
 public readonly record struct PvPDamageGateInput(
-    PvPBurstIntent Intent,
-    double EffectiveHpRatio,
-    double ExpectedDamageRatio,
-    double ActiveDamageReduction,
-    bool HasInvulnerability,
-    bool HasPrioritySignal);
+	PvPBurstIntent Intent,
+	double EffectiveHpRatio,
+	double ExpectedDamageRatio,
+	double ActiveDamageReduction,
+	bool HasInvulnerability,
+	bool HasPrioritySignal);

@@ -24,35 +24,35 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// </summary>
 public static class CrystalCarrierState
 {
-    /// <summary>
-    /// Status ID applied to the player currently holding the crystal in Crystalline Conflict.
-    /// Zero until verified in-game (see Phase 2 plan, Task 7). The factor degrades to a
-    /// zero contribution when this value is zero.
-    /// </summary>
-    public const StatusID CarrierStatusId = (StatusID)0;
+	/// <summary>
+	/// Status ID applied to the player currently holding the crystal in Crystalline Conflict.
+	/// Zero until verified in-game (see Phase 2 plan, Task 7). The factor degrades to a
+	/// zero contribution when this value is zero.
+	/// </summary>
+	public const StatusID CarrierStatusId = (StatusID)0;
 
-    /// <summary>
-    /// Return the <see cref="Dalamud.Game.ClientState.Objects.Types.IGameObject.GameObjectId"/>
-    /// of the enemy carrier, or <c>null</c> if not in CC, if the carrier status is unverified,
-    /// or if no current hostile target holds the status.
-    /// </summary>
-    public static ulong? GetCurrentCarrierId()
-    {
-        if (!DataCenter.IsInCrystallineConflict) return null;
-        if (CarrierStatusId == (StatusID)0) return null;
+	/// <summary>
+	/// Return the <see cref="Dalamud.Game.ClientState.Objects.Types.IGameObject.GameObjectId"/>
+	/// of the enemy carrier, or <c>null</c> if not in CC, if the carrier status is unverified,
+	/// or if no current hostile target holds the status.
+	/// </summary>
+	public static ulong? GetCurrentCarrierId()
+	{
+		if (!DataCenter.IsInCrystallineConflict) return null;
+		if (CarrierStatusId == (StatusID)0) return null;
 
-        foreach (var target in DataCenter.AllHostileTargets)
-        {
-            var statusList = target.StatusList;
-            if (statusList == null) continue;
-            foreach (var status in statusList)
-            {
-                if ((StatusID)status.StatusId == CarrierStatusId)
-                {
-                    return target.GameObjectId;
-                }
-            }
-        }
-        return null;
-    }
+		foreach (var target in DataCenter.AllHostileTargets)
+		{
+			var statusList = target.StatusList;
+			if (statusList == null) continue;
+			foreach (var status in statusList)
+			{
+				if ((StatusID)status.StatusId == CarrierStatusId)
+				{
+					return target.GameObjectId;
+				}
+			}
+		}
+		return null;
+	}
 }

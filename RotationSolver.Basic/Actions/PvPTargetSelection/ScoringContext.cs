@@ -5,12 +5,12 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// Constructed at the boundary in <c>FindHostileRaw()</c>; scorer and factors are pure on this.
 /// </summary>
 public sealed record ScoringContext(
-    ScoringWeights Weights,
-    IMitigationDatabase MitigationDatabase,
-    ILBDatabase LBDatabase,
-    ulong? PreviousTargetId,
-    ulong? CrystalCarrierObjectId,
-    IReadOnlyList<IBattleChara> Hostiles,
-    IReadOnlySet<ulong> ThreatenedAllyIds,
-    IReadOnlySet<ulong> ObjectiveRelevantTargetIds,
-    float EffectiveRangeYalms);
+	ScoringWeights Weights,
+	IMitigationDatabase MitigationDatabase,
+	ILBDatabase LBDatabase,
+	ulong? PreviousTargetId,
+	ulong? CrystalCarrierObjectId,
+	IReadOnlyList<IBattleChara> Hostiles,
+	IReadOnlySet<ulong> ThreatenedAllyIds,
+	IReadOnlySet<ulong> ObjectiveRelevantTargetIds,
+	float EffectiveRangeYalms);

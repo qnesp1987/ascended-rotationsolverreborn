@@ -14,13 +14,13 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// <param name="HealthRatioProvider">Caller health ratio policy, including any live refined HP semantics.</param>
 /// <param name="HasStatus">Caller status policy, including any pending apply-status semantics.</param>
 public readonly record struct PvPLiveTargetFactsContext(
-    IMitigationDatabase MitigationDatabase,
-    IReadOnlySet<ulong> ObjectiveRelevantTargetIds,
-    IReadOnlyList<PvPCombatantSnapshot> Allies,
-    TimeSpan CurrentTime,
-    PvPGuardCooldownTracker GuardCooldownTracker,
-    TimeSpan GuardReactionWindow,
-    float ActionRange,
-    Func<IBattleChara, float> DistanceToPlayerProvider,
-    Func<IBattleChara, float> HealthRatioProvider,
-    Func<IBattleChara, StatusID, bool> HasStatus);
+	IMitigationDatabase MitigationDatabase,
+	IReadOnlySet<ulong> ObjectiveRelevantTargetIds,
+	IReadOnlyList<PvPCombatantSnapshot> Allies,
+	TimeSpan CurrentTime,
+	PvPGuardCooldownTracker GuardCooldownTracker,
+	TimeSpan GuardReactionWindow,
+	float ActionRange,
+	Func<IBattleChara, float> DistanceToPlayerProvider,
+	Func<IBattleChara, float> HealthRatioProvider,
+	Func<IBattleChara, StatusID, bool> HasStatus);

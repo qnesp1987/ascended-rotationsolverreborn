@@ -5,12 +5,12 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// </summary>
 public enum ScoringPreset
 {
-    /// <summary>Casual CC tuning: role-heavy, forgiving.</summary>
-    Casual = 0,
+	/// <summary>Casual CC tuning: role-heavy, forgiving.</summary>
+	Casual = 0,
 
-    /// <summary>Ranked CC tuning: mitigation-heavy, more reactive.</summary>
-    Ranked = 1,
+	/// <summary>Ranked CC tuning: mitigation-heavy, more reactive.</summary>
+	Ranked = 1,
 
-    /// <summary>User-defined weights via config.</summary>
-    Custom = 2,
+	/// <summary>User-defined weights via config.</summary>
+	Custom = 2,
 }

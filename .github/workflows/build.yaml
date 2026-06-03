@@ -17,6 +17,9 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Verify Formatting
+        run: dotnet format whitespace RotationSolver.sln --verify-no-changes
+
       - name: Download Dalamud Latest
         run: |
           Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/latest.zip -OutFile latest.zip
@@ -27,3 +30,6 @@ jobs:
 
       - name: Build Plugin
         run: dotnet build --no-restore -c Release RotationSolver/RotationSolver.csproj
+
+      - name: Run Tests
+        run: dotnet run --project RotationSolver.Tests/RotationSolver.Tests.csproj

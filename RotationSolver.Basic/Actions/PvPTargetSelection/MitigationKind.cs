@@ -5,12 +5,12 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// </summary>
 public enum MitigationKind
 {
-    /// <summary>Effective invulnerability — attacking is wasted GCDs.</summary>
-    Invuln = 0,
+	/// <summary>Effective invulnerability — attacking is wasted GCDs.</summary>
+	Invuln = 0,
 
-    /// <summary>Heavy damage reduction with significant duration.</summary>
-    HeavyDR = 1,
+	/// <summary>Heavy damage reduction with significant duration.</summary>
+	HeavyDR = 1,
 
-    /// <summary>Damage shield modeled as DR-equivalent.</summary>
-    Shield = 2,
+	/// <summary>Damage shield modeled as DR-equivalent.</summary>
+	Shield = 2,
 }

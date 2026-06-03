@@ -1,0 +1,5 @@
+# Force LF for C# sources so `dotnet format whitespace` (the .editorconfig
+# `end_of_line = lf` rule) passes on Windows CI, which checks out with
+# core.autocrlf=true by default. Without this, .cs files arrive as CRLF on the
+# runner and the format gate rewrites every line.
+*.cs text eol=lf

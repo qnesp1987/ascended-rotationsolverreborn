@@ -22,51 +22,51 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// </summary>
 public static class ThreatenedAllyState
 {
-    /// <summary>
-    /// Allies at or below this health ratio (0.0 to 1.0 scale) are flagged as
-    /// threatened. 30% is the spec-pinned threshold from Phase 3.
-    /// </summary>
-    public const float ThreatLowHpRatio = 0.30f;
+	/// <summary>
+	/// Allies at or below this health ratio (0.0 to 1.0 scale) are flagged as
+	/// threatened. 30% is the spec-pinned threshold from Phase 3.
+	/// </summary>
+	public const float ThreatLowHpRatio = 0.30f;
 
-    /// <summary>
-    /// Build the threatened-ally id set from the current frame's
-    /// <see cref="DataCenter.PartyMembers"/> snapshot. Returns
-    /// <see cref="FrozenSet{T}.Empty"/> if the local player is unavailable.
-    /// </summary>
-    public static IReadOnlySet<ulong> BuildThreatenedAllyIds()
-    {
-        var player = Player.Object;
-        if (player == null) return FrozenSet<ulong>.Empty;
+	/// <summary>
+	/// Build the threatened-ally id set from the current frame's
+	/// <see cref="DataCenter.PartyMembers"/> snapshot. Returns
+	/// <see cref="FrozenSet{T}.Empty"/> if the local player is unavailable.
+	/// </summary>
+	public static IReadOnlySet<ulong> BuildThreatenedAllyIds()
+	{
+		var player = Player.Object;
+		if (player == null) return FrozenSet<ulong>.Empty;
 
-        var ids = new HashSet<ulong> { player.GameObjectId };
+		var ids = new HashSet<ulong> { player.GameObjectId };
 
-        foreach (var member in DataCenter.PartyMembers)
-        {
-            try
-            {
-                if (member == null) continue;
+		foreach (var member in DataCenter.PartyMembers)
+		{
+			try
+			{
+				if (member == null) continue;
 
-                var classJob = member.ClassJob;
-                if (classJob.RowId != 0 && classJob.Value.GetJobRole() == JobRole.Healer)
-                {
-                    ids.Add(member.GameObjectId);
-                    continue;
-                }
+				var classJob = member.ClassJob;
+				if (classJob.RowId != 0 && classJob.Value.GetJobRole() == JobRole.Healer)
+				{
+					ids.Add(member.GameObjectId);
+					continue;
+				}
 
-                // Filter corpses: GetHealthRatio returns 0 for dead allies; the > 0 clause
-                // skips them so we don't flag a dead healer as "low HP" peel-worthy.
-                var ratio = member.GetHealthRatio();
-                if (ratio > 0f && ratio < ThreatLowHpRatio)
-                {
-                    ids.Add(member.GameObjectId);
-                }
-            }
-            catch (AccessViolationException ex)
-            {
-                ECommons.Logging.PluginLog.Error($"AccessViolationException in ThreatenedAllyState: {ex.Message}");
-            }
-        }
+				// Filter corpses: GetHealthRatio returns 0 for dead allies; the > 0 clause
+				// skips them so we don't flag a dead healer as "low HP" peel-worthy.
+				var ratio = member.GetHealthRatio();
+				if (ratio > 0f && ratio < ThreatLowHpRatio)
+				{
+					ids.Add(member.GameObjectId);
+				}
+			}
+			catch (AccessViolationException ex)
+			{
+				ECommons.Logging.PluginLog.Error($"AccessViolationException in ThreatenedAllyState: {ex.Message}");
+			}
+		}
 
-        return ids.ToFrozenSet();
-    }
+		return ids.ToFrozenSet();
+	}
 }

@@ -7,18 +7,18 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
 /// </summary>
 public static class MitigationPenalty
 {
-    public static double Compute(IBattleChara target, IMitigationDatabase database)
-    {
-        var statusList = target.StatusList;
-        if (statusList == null) return 0.0;
+	public static double Compute(IBattleChara target, IMitigationDatabase database)
+	{
+		var statusList = target.StatusList;
+		if (statusList == null) return 0.0;
 
-        var total = 0.0;
-        foreach (var status in statusList)
-        {
-            if (!database.TryGet((StatusID)status.StatusId, out var entry)) continue;
-            if (entry.Kind == MitigationKind.Invuln) continue;
-            total += entry.DamageReductionPercent;
-        }
-        return total;
-    }
+		var total = 0.0;
+		foreach (var status in statusList)
+		{
+			if (!database.TryGet((StatusID)status.StatusId, out var entry)) continue;
+			if (entry.Kind == MitigationKind.Invuln) continue;
+			total += entry.DamageReductionPercent;
+		}
+		return total;
+	}
 }

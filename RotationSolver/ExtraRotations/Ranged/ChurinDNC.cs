@@ -195,7 +195,7 @@ public sealed class ChurinDNC : DancerRotation
 				return ActiveStandardRecastRemain > WeaponTotal ? MidEspritThreshold : MaxEsprit;
 			}
 
-			if ((HasDanceOfTheDawn|| !DanceOfTheDawnPvE.EnoughLevel) && (!HasLastDance || CanSaberDance || IsLastGCD(ActionID.TillanaPvE)))
+			if ((HasDanceOfTheDawn || !DanceOfTheDawnPvE.EnoughLevel) && (!HasLastDance || CanSaberDance || IsLastGCD(ActionID.TillanaPvE)))
 			{
 				return SaberDanceEspritCost;
 			}

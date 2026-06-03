@@ -6,9 +6,9 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
 /// </summary>
 public static class HysteresisBonus
 {
-    public static double Compute(ulong targetId, ulong? previousTargetId)
-    {
-        if (previousTargetId is null) return 0.0;
-        return previousTargetId.Value == targetId ? 1.0 : 0.0;
-    }
+	public static double Compute(ulong targetId, ulong? previousTargetId)
+	{
+		if (previousTargetId is null) return 0.0;
+		return previousTargetId.Value == targetId ? 1.0 : 0.0;
+	}
 }

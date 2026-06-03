@@ -6,14 +6,14 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
 /// </summary>
 public static class CrystalCarrierFactor
 {
-    /// <summary>
-    /// Return 1.0 when <paramref name="targetId"/> matches a non-null
-    /// <paramref name="carrierId"/>; 0.0 otherwise. A null <paramref name="carrierId"/>
-    /// (no carrier detected) yields 0.0.
-    /// </summary>
-    public static double Compute(ulong targetId, ulong? carrierId)
-    {
-        if (carrierId is null) return 0.0;
-        return targetId == carrierId.Value ? 1.0 : 0.0;
-    }
+	/// <summary>
+	/// Return 1.0 when <paramref name="targetId"/> matches a non-null
+	/// <paramref name="carrierId"/>; 0.0 otherwise. A null <paramref name="carrierId"/>
+	/// (no carrier detected) yields 0.0.
+	/// </summary>
+	public static double Compute(ulong targetId, ulong? carrierId)
+	{
+		if (carrierId is null) return 0.0;
+		return targetId == carrierId.Value ? 1.0 : 0.0;
+	}
 }

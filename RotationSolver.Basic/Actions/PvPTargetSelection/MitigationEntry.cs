@@ -5,7 +5,7 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// when <see cref="Kind"/> is <see cref="MitigationKind.Invuln"/>.
 /// </summary>
 public readonly record struct MitigationEntry(
-    StatusID Id,
-    MitigationKind Kind,
-    double DamageReductionPercent,
-    string Description);
+	StatusID Id,
+	MitigationKind Kind,
+	double DamageReductionPercent,
+	string Description);

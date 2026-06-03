@@ -17,121 +17,121 @@ namespace RotationSolver.UI;
 /// </summary>
 internal class PvPSmartDebugOverlay : Window
 {
-    private const ImGuiWindowFlags BaseFlags = ImGuiWindowFlags.NoCollapse;
+	private const ImGuiWindowFlags BaseFlags = ImGuiWindowFlags.NoCollapse;
 
-    private static bool _explainErrorLogged;
+	private static bool _explainErrorLogged;
 
-    public PvPSmartDebugOverlay() : base("PvPSmart Score Breakdown", BaseFlags)
-    {
-        Size = new Vector2(980, 260);
-        SizeCondition = ImGuiCond.FirstUseEver;
-        RespectCloseHotkey = true;
-        IsOpen = true;
-    }
+	public PvPSmartDebugOverlay() : base("PvPSmart Score Breakdown", BaseFlags)
+	{
+		Size = new Vector2(980, 260);
+		SizeCondition = ImGuiCond.FirstUseEver;
+		RespectCloseHotkey = true;
+		IsOpen = true;
+	}
 
-    public override bool DrawConditions()
-    {
-        return Service.Config.PvPSmartShowDebugOverlay && DataCenter.IsPvP;
-    }
+	public override bool DrawConditions()
+	{
+		return Service.Config.PvPSmartShowDebugOverlay && DataCenter.IsPvP;
+	}
 
-    public override void OnClose()
-    {
-        // Keep the checkbox and the window state aligned: closing via the X
-        // turns the config flag off.
-        Service.Config.PvPSmartShowDebugOverlay = false;
-        IsOpen = true; // re-arm; DrawConditions decides visibility on the next frame
-        base.OnClose();
-    }
+	public override void OnClose()
+	{
+		// Keep the checkbox and the window state aligned: closing via the X
+		// turns the config flag off.
+		Service.Config.PvPSmartShowDebugOverlay = false;
+		IsOpen = true; // re-arm; DrawConditions decides visibility on the next frame
+		base.OnClose();
+	}
 
-    public override void Draw()
-    {
-        var hostiles = DataCenter.AllHostileTargets;
-        if (hostiles == null || hostiles.Count == 0)
-        {
-            ImGui.TextUnformatted("No hostile targets in range.");
-            return;
-        }
+	public override void Draw()
+	{
+		var hostiles = DataCenter.AllHostileTargets;
+		if (hostiles == null || hostiles.Count == 0)
+		{
+			ImGui.TextUnformatted("No hostile targets in range.");
+			return;
+		}
 
-        var context = PvPScoringContextBuilder.BuildCurrent(hostiles);
+		var context = PvPScoringContextBuilder.BuildCurrent(hostiles);
 
-        var headerSelected = DataCenter.LastPvPSmartTargetId is ulong selId
-            ? $"0x{selId:X}"
-            : "none";
-        ImGui.TextUnformatted($"Preset: {Service.Config.PvPScoringPreset} | Hostiles: {hostiles.Count} | Selected: {headerSelected}");
-        ImGui.Separator();
+		var headerSelected = DataCenter.LastPvPSmartTargetId is ulong selId
+			? $"0x{selId:X}"
+			: "none";
+		ImGui.TextUnformatted($"Preset: {Service.Config.PvPScoringPreset} | Hostiles: {hostiles.Count} | Selected: {headerSelected}");
+		ImGui.Separator();
 
-        const ImGuiTableFlags TableFlags =
-            ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp;
+		const ImGuiTableFlags TableFlags =
+			ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingStretchProp;
 
-        if (!ImGui.BeginTable("##pvpsmart_breakdown", 16, TableFlags))
-        {
-            return;
-        }
+		if (!ImGui.BeginTable("##pvpsmart_breakdown", 16, TableFlags))
+		{
+			return;
+		}
 
-        ImGui.TableSetupColumn("Sel");
-        ImGui.TableSetupColumn("Name");
-        ImGui.TableSetupColumn("Total");
-        ImGui.TableSetupColumn("Role");
-        ImGui.TableSetupColumn("Finish");
-        ImGui.TableSetupColumn("-Mitig");
-        ImGui.TableSetupColumn("-Dist");
-        ImGui.TableSetupColumn("Sticky");
-        ImGui.TableSetupColumn("Carrier");
-        ImGui.TableSetupColumn("LB");
-        ImGui.TableSetupColumn("Isol");
-        ImGui.TableSetupColumn("Threat");
-        ImGui.TableSetupColumn("MP");
-        ImGui.TableSetupColumn("-Resil");
-        ImGui.TableSetupColumn("Obj");
-        ImGui.TableSetupColumn("Invuln");
-        ImGui.TableHeadersRow();
+		ImGui.TableSetupColumn("Sel");
+		ImGui.TableSetupColumn("Name");
+		ImGui.TableSetupColumn("Total");
+		ImGui.TableSetupColumn("Role");
+		ImGui.TableSetupColumn("Finish");
+		ImGui.TableSetupColumn("-Mitig");
+		ImGui.TableSetupColumn("-Dist");
+		ImGui.TableSetupColumn("Sticky");
+		ImGui.TableSetupColumn("Carrier");
+		ImGui.TableSetupColumn("LB");
+		ImGui.TableSetupColumn("Isol");
+		ImGui.TableSetupColumn("Threat");
+		ImGui.TableSetupColumn("MP");
+		ImGui.TableSetupColumn("-Resil");
+		ImGui.TableSetupColumn("Obj");
+		ImGui.TableSetupColumn("Invuln");
+		ImGui.TableHeadersRow();
 
-        for (var i = 0; i < hostiles.Count; i++)
-        {
-            var hostile = hostiles[i];
-            if (hostile == null) continue;
+		for (var i = 0; i < hostiles.Count; i++)
+		{
+			var hostile = hostiles[i];
+			if (hostile == null) continue;
 
-            ScoreBreakdown b;
-            try
-            {
-                b = PvPTargetScorer.Explain(hostile, context);
-            }
-            catch (Exception ex)
-            {
-                if (!_explainErrorLogged)
-                {
-                    ECommons.Logging.PluginLog.Warning($"PvPSmartDebugOverlay: PvPTargetScorer.Explain threw; suppressing further warnings this session. First error: {ex.Message}");
-                    _explainErrorLogged = true;
-                }
-                continue;
-            }
+			ScoreBreakdown b;
+			try
+			{
+				b = PvPTargetScorer.Explain(hostile, context);
+			}
+			catch (Exception ex)
+			{
+				if (!_explainErrorLogged)
+				{
+					ECommons.Logging.PluginLog.Warning($"PvPSmartDebugOverlay: PvPTargetScorer.Explain threw; suppressing further warnings this session. First error: {ex.Message}");
+					_explainErrorLogged = true;
+				}
+				continue;
+			}
 
-            ImGui.TableNextRow();
-            ImGui.TableNextColumn();
-            ImGui.TextUnformatted(hostile.GameObjectId == DataCenter.LastPvPSmartTargetId ? ">" : "");
+			ImGui.TableNextRow();
+			ImGui.TableNextColumn();
+			ImGui.TextUnformatted(hostile.GameObjectId == DataCenter.LastPvPSmartTargetId ? ">" : "");
 
-            ImGui.TableNextColumn();
-            var name = hostile.Name?.TextValue ?? "?";
-            if (name.Length > 18) name = name[..18];
-            ImGui.TextUnformatted(name);
+			ImGui.TableNextColumn();
+			var name = hostile.Name?.TextValue ?? "?";
+			if (name.Length > 18) name = name[..18];
+			ImGui.TextUnformatted(name);
 
-            ImGui.TableNextColumn();
-            ImGui.TextUnformatted(double.IsNegativeInfinity(b.Total) ? "-inf" : b.Total.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Role.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Finish.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Mitigation.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Distance.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Sticky.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Carrier.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.LB.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Isolation.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Threat.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.MpPressure.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Resilience.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Objective.ToString("F3"));
-            ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Invuln ? "Y" : "");
-        }
+			ImGui.TableNextColumn();
+			ImGui.TextUnformatted(double.IsNegativeInfinity(b.Total) ? "-inf" : b.Total.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Role.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Finish.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Mitigation.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Distance.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Sticky.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Carrier.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.LB.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Isolation.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Threat.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.MpPressure.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Resilience.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Objective.ToString("F3"));
+			ImGui.TableNextColumn(); ImGui.TextUnformatted(b.Invuln ? "Y" : "");
+		}
 
-        ImGui.EndTable();
-    }
+		ImGui.EndTable();
+	}
 }

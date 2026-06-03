@@ -6,6 +6,6 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 /// observed during a cast (also exposed on <c>IBattleChara</c>).
 /// </summary>
 public readonly record struct LBEntry(
-    uint ActionId,
-    LBCategory Category,
-    string Description);
+	uint ActionId,
+	LBCategory Category,
+	string Description);

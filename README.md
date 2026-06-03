@@ -42,7 +42,7 @@ Do not run upstream RSR at the same time. This fork has its own internal plugin 
 ### BRD Ascended PvE
 
 * Adds `BRD Ascended`, a Patch 7.5 Bard PvE rotation option implemented as `BRD_Ascended`.
-* Intended for high end raids, ultimates, savage, extremes, alliance raids, and dungeon runs.
+* Intended as a general Bard PvE rotation with standard, advanced, and custom timing options.
 * Uses the Bard PvE spec work for song timing, DoT thresholds, burst alignment, potion timing, resource cap safety, level sync fallback, and resolved target AoE behavior.
 
 ### Separate Ascended Package
