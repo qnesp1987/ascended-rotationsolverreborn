@@ -18,6 +18,7 @@ internal static partial class PvETestSuite
 		new("bard ascended filler waits for enhanced filler or resonant ready", BardAscendedFillerWaitsForEnhancedFillerOrResonantReady),
 		new("bard ascended runtime falls back when enhanced filler cannot resolve", BardAscendedRuntimeFallsBackWhenEnhancedFillerCannotResolve),
 		new("bard ascended aoe thresholds distinguish gcd and ogcd", BardAscendedAoeThresholdsDistinguishGcdAndOgcd),
+		new("bard ascended fresh dots yield to resolved normal aoe", BardAscendedFreshDotsYieldToResolvedNormalAoe),
 		new("bard ascended runtime uses resolved aoe target counts", BardAscendedRuntimeUsesResolvedAoeTargetCounts),
 		new("bard ascended runtime uses aoe apex and blast before fresh dots", BardAscendedRuntimeUsesAoeApexAndBlastBeforeFreshDots),
 		new("bard ascended bloodletter recovery forecasts post spend charges", BardAscendedBloodletterRecoveryForecastsPostSpendCharges),

@@ -65,6 +65,12 @@ internal readonly record struct BardAscendedApexDecisionInput(
 	bool WouldUseEnhancedFiller,
 	bool NoFutureBlastPossible);
 
+internal readonly record struct BardAscendedFreshDotAoeInput(
+	bool HasResolvedNormalAoeCandidate,
+	int NormalAoeAffectedTargets,
+	float TargetSecondsRemaining,
+	bool IsBossTarget);
+
 internal readonly record struct BardAscendedBloodletterRecoveryInput
 {
 	internal int CurrentCharges { get; init; }
@@ -98,6 +104,8 @@ internal static class BardAscendedDecisionPolicy
 	internal const int ApexBeatsEnhancedFillerSoulVoice = 40;
 	internal const int GcdAoETargets = 2;
 	internal const int OgcdAoETargets = 2;
+	internal const int NormalAoeFreshDotOverrideTargets = 3;
+	internal const float FreshDotHighHpMinimumTargetSeconds = 30f;
 
 	private const float OpenerPotionSeconds = 0f;
 	private const float TwoMinutePotionSeconds = 120f;
@@ -218,6 +226,22 @@ internal static class BardAscendedDecisionPolicy
 	internal static bool ShouldUseOgcdAoE(int affectedTargets)
 	{
 		return affectedTargets >= OgcdAoETargets;
+	}
+
+	internal static bool ShouldFreshDotYieldToNormalAoe(BardAscendedFreshDotAoeInput input)
+	{
+		if (!input.HasResolvedNormalAoeCandidate) return false;
+		if (input.IsBossTarget) return false;
+		if (float.IsNaN(input.TargetSecondsRemaining)) return false;
+		if (TargetMeetsThreshold(
+				input.TargetSecondsRemaining,
+				isBossTarget: false,
+				FreshDotHighHpMinimumTargetSeconds))
+		{
+			return false;
+		}
+
+		return input.NormalAoeAffectedTargets >= NormalAoeFreshDotOverrideTargets;
 	}
 
 	internal static bool CanRecoverBloodletterChargesAfterSpend(BardAscendedBloodletterRecoveryInput input)
