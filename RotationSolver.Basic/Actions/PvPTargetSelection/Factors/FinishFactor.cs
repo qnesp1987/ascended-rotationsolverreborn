@@ -9,6 +9,11 @@ public static class FinishFactor
 {
 	private const double SlopeK = 0.005;
 
+	/// <summary>
+	/// Return the logistic finish score for <paramref name="effectiveHp"/> about
+	/// <paramref name="midpoint"/>: ~1 for low eHP, 0.5 at the midpoint, ~0 for high eHP, and
+	/// 0 for infinite eHP (invulnerable). A non-positive midpoint is clamped to 1.
+	/// </summary>
 	public static double Compute(double effectiveHp, double midpoint)
 	{
 		if (double.IsInfinity(effectiveHp)) return 0.0;

@@ -169,7 +169,8 @@ internal static class DataCenter
 	private static readonly Lock _tankbusterLock = new();
 
 	/// <summary>
-	/// Only recorded 15s hps.
+	/// Maximum number of per-target HP-ratio samples retained, recorded at 1 Hz
+	/// (see TargetUpdater.UpdateTimeToKill), so this is also the window length in seconds.
 	/// </summary>
 	public const int HP_RECORD_TIME = 240;
 

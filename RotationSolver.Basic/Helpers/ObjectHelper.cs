@@ -3105,7 +3105,11 @@ public static class ObjectHelper
 	private static readonly TimeSpan CheckSpan = TimeSpan.FromSeconds(2.5);
 
 	/// <summary>
-	/// Calculates the estimated time to kill the specified battle character. Only applicable after the first 2.5 seconds, and uses a moving average of the last 15 seconds of health ratios
+	/// Estimates time to kill the specified battle character. With <paramref name="wholeTime"/> false
+	/// (default), returns remaining seconds from the recent kill-rate fitted by
+	/// <see cref="TimeToKillEstimator"/> over the last few seconds. With <paramref name="wholeTime"/>
+	/// true, returns the total-fight estimate from the whole recorded window (used by
+	/// <see cref="IsBossFromTTK"/>). Requires at least 2.5 seconds of samples; otherwise <see cref="float.NaN"/>.
 	/// </summary>
 	/// <param name="battleChara">The battle character to calculate the time to kill for.</param>
 	/// <param name="wholeTime">If set to <c>true</c>, calculates the total time to kill; otherwise, calculates the remaining time to kill.</param>
@@ -3122,6 +3126,11 @@ public static class ObjectHelper
 		if (battleChara.IsDummy())
 		{
 			return 999.99f;
+		}
+
+		if (!wholeTime)
+		{
+			return EstimateRecentRemainingTtk(battleChara);
 		}
 
 		const int movingAverageWindow = 5;
@@ -3183,7 +3192,53 @@ public static class ObjectHelper
 		}
 
 		var elapsedTime = (float)(DateTime.Now - startTime).TotalSeconds;
-		return elapsedTime / hpRatioDifference * (wholeTime ? 1 : currentHealthRatio);
+		return elapsedTime / hpRatioDifference;
+	}
+
+	/// <summary>
+	/// Estimates remaining seconds until <paramref name="battleChara"/> dies, from the recent
+	/// slope of its recorded HP ratio. Impure adapter: reads <see cref="DataCenter.RecordedHP"/>
+	/// and the clock, then delegates the math to <see cref="TimeToKillEstimator"/>.
+	/// </summary>
+	private static float EstimateRecentRemainingTtk(IBattleChara battleChara)
+	{
+		var currentHealthRatio = battleChara.GetHealthRatio();
+		if (float.IsNaN(currentHealthRatio))
+		{
+			return float.NaN;
+		}
+
+		var objId = battleChara.GameObjectId;
+		var now = DateTime.Now;
+
+		// RecordedHP holds at most HP_RECORD_TIME samples; copy this target's sub-full-HP
+		// samples to the stack to avoid a heap allocation on this per-frame hot path.
+		Span<(double ageSeconds, double hpRatio)> samples =
+			stackalloc (double, double)[DataCenter.HP_RECORD_TIME];
+		var count = 0;
+
+		foreach ((var time, var hpRatiosDict) in DataCenter.RecordedHP)
+		{
+			if (count >= samples.Length)
+			{
+				break;
+			}
+
+			if (hpRatiosDict != null && hpRatiosDict.TryGetValue(objId, out var ratio) && ratio != 1f)
+			{
+				samples[count++] = ((now - time).TotalSeconds, ratio);
+			}
+		}
+
+		var remaining = TimeToKillEstimator.EstimateRemainingSeconds(
+			samples[..count],
+			currentHealthRatio,
+			TimeToKillEstimator.DefaultWindowSeconds,
+			TimeToKillEstimator.DefaultMinSamples,
+			CheckSpan.TotalSeconds,
+			TimeToKillEstimator.DefaultRateEpsilon);
+
+		return (float)remaining;
 	}
 
 	private static readonly ConcurrentDictionary<ulong, DateTime> _aliveStartTimes = [];

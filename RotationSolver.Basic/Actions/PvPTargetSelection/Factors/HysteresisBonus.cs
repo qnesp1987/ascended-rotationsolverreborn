@@ -6,6 +6,10 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
 /// </summary>
 public static class HysteresisBonus
 {
+	/// <summary>
+	/// Return <c>1.0</c> when <paramref name="targetId"/> equals <paramref name="previousTargetId"/>
+	/// (the previously-selected target), <c>0.0</c> otherwise (including when there was none).
+	/// </summary>
 	public static double Compute(ulong targetId, ulong? previousTargetId)
 	{
 		if (previousTargetId is null) return 0.0;

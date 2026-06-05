@@ -46,5 +46,14 @@ internal static partial class PvETestSuite
 		new("bard ascended runtime enters strict opener before priority abilities", BardAscendedRuntimeEntersStrictOpenerBeforePriorityAbilities),
 		new("bard ascended bloodletter uses liberal spending with burst reservation", BardAscendedBloodletterUsesLiberalSpendingWithBurstReservation),
 		new("bard ascended runtime advances strict opener only after action success", BardAscendedRuntimeAdvancesStrictOpenerOnlyAfterActionSuccess),
+		new("ttk estimator matches constant kill rate", TimeToKillEstimatorMatchesConstantKillRate),
+		new("ttk estimator tracks steep recent rate below dying threshold", TimeToKillEstimatorTracksSteepRecentRateBelowDyingThreshold),
+		new("ttk estimator ignores samples outside window", TimeToKillEstimatorIgnoresSamplesOutsideWindow),
+		new("ttk estimator returns nan for too few samples", TimeToKillEstimatorReturnsNaNForTooFewSamples),
+		new("ttk estimator returns nan for short span", TimeToKillEstimatorReturnsNaNForShortSpan),
+		new("ttk estimator returns nan for flat hp", TimeToKillEstimatorReturnsNaNForFlatHp),
+		new("ttk estimator returns nan for rising hp", TimeToKillEstimatorReturnsNaNForRisingHp),
+		new("ttk estimator high hp yields large estimate for opener", TimeToKillEstimatorHighHpYieldsLargeEstimateForOpener),
+		new("ttk estimator returns nan for nan current hp", TimeToKillEstimatorReturnsNaNForNaNCurrentHp),
 	];
 }

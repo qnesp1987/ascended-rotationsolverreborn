@@ -16,7 +16,7 @@ public static class ThreatFactor
 {
 	/// <summary>
 	/// Return <c>1.0</c> when <paramref name="candidate"/>'s current
-	/// <see cref="IBattleChara.TargetObjectId"/> is in
+	/// <c>TargetObjectId</c> is in
 	/// <paramref name="threatenedAllyIds"/>; <c>0.0</c> otherwise. Uses
 	/// <c>TargetObjectId</c> directly rather than dereferencing
 	/// <c>TargetObject</c> — the former is a value property, no dereference cost.

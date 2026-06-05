@@ -7,6 +7,11 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
 /// </summary>
 public static class MitigationPenalty
 {
+	/// <summary>
+	/// Sum the damage-reduction percentages of <paramref name="target"/>'s active, non-invuln
+	/// mitigation statuses, resolved through <paramref name="database"/>. Returns 0 when the
+	/// target has no status list or no matching statuses.
+	/// </summary>
 	public static double Compute(IBattleChara target, IMitigationDatabase database)
 	{
 		var statusList = target.StatusList;

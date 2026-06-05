@@ -7,6 +7,10 @@ namespace RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
 /// </summary>
 public static class RoleValueFactor
 {
+	/// <summary>
+	/// Return the baseline desirability weight for <paramref name="role"/>
+	/// (Healer highest, Tank lowest; unknown roles score 0).
+	/// </summary>
 	public static double Compute(JobRole role) => role switch
 	{
 		JobRole.Healer => 1.00,

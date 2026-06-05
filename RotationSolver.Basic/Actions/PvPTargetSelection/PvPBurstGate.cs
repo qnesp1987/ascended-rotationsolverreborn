@@ -1,5 +1,6 @@
 using ECommons.GameFunctions;
 using RotationSolver.Basic.Actions.PvPTargetSelection.Factors;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RotationSolver.Basic.Actions.PvPTargetSelection;
 
@@ -169,7 +170,7 @@ public static class PvPBurstGate
 		return affectedTargets;
 	}
 
-	private static bool IsUsableHostile(IBattleChara? target)
+	private static bool IsUsableHostile([NotNullWhen(true)] IBattleChara? target)
 	{
 		return target != null && target.MaxHp > 0 && target.IsEnemy();
 	}

@@ -39,7 +39,7 @@
 		<Compile Include="..\RotationSolver\RebornRotations\PVPRotations\Ranged\BardPvPTargetPolicy.cs" Link="BardPvPTargetPolicy.cs" />
 		<Compile Include="..\RotationSolver\RebornRotations\PVPRotations\Ranged\MachinistPvPDecisionPolicy.cs" Link="MachinistPvPDecisionPolicy.cs" />
 		<Compile Include="..\RotationSolver\RebornRotations\PVPRotations\Ranged\MachinistPvPTargetPolicy.cs" Link="MachinistPvPTargetPolicy.cs" />
-		<Compile Include="..\RotationSolver\RebornRotations\PVPRotations\Melee\NinjaPvPLimitBreakPolicy.cs" Link="NinjaPvPLimitBreakPolicy.cs" />
+		<Compile Include="..\RotationSolver.Basic\Helpers\TimeToKillEstimator.cs" Link="TimeToKillEstimator.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
