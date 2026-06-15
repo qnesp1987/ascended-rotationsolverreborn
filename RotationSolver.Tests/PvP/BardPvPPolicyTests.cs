@@ -12,7 +12,6 @@ internal static partial class PvPTestSuite
 			TargetIsCasting: false,
 			TargetThreatensFragileAlly: false,
 			TargetIsBurstWorthy: false,
-			TargetHasLowMp: false,
 			TargetHealthRatio: 1f,
 			TargetDistance: 20f,
 			SafeBackstepExists: true,
@@ -28,7 +27,6 @@ internal static partial class PvPTestSuite
 			TargetIsCasting: true,
 			TargetThreatensFragileAlly: false,
 			TargetIsBurstWorthy: false,
-			TargetHasLowMp: false,
 			TargetHealthRatio: 1f,
 			TargetDistance: 20f,
 			SafeBackstepExists: true,
@@ -44,13 +42,188 @@ internal static partial class PvPTestSuite
 			TargetIsCasting: true,
 			TargetThreatensFragileAlly: true,
 			TargetIsBurstWorthy: true,
-			TargetHasLowMp: true,
 			TargetHealthRatio: 0.20f,
 			TargetDistance: 8f,
 			SafeBackstepExists: true,
 			ObjectiveControlNeeded: true);
 
 		AssertFalse(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input), "Nocturne should reject Resilience");
+	}
+
+	static void SilentNocturneRejectsGuardedTarget()
+	{
+		var input = new BardPvPShutdownInput(
+			TargetHasResilience: false,
+			TargetIsCasting: true,
+			TargetThreatensFragileAlly: true,
+			TargetIsBurstWorthy: true,
+			TargetHealthRatio: 0.20f,
+			TargetDistance: 8f,
+			SafeBackstepExists: true,
+			ObjectiveControlNeeded: true,
+			KillSecure: new BardPvPKillSecureFacts(
+				EffectiveHpRatio: 0.20,
+				ExpectedDamageRatio: 0.50,
+				RecuperateRatio: 0.30,
+				TargetCanRecuperate: true,
+				HasGuard: true));
+
+		AssertFalse(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input),
+			"Nocturne should not fire into Guard immunity");
+	}
+
+	static void SilentNocturneSecuresKillThroughRecuperate()
+	{
+		// Health 0.80 keeps the engaged-HP trigger OFF, so a true result proves the anti-heal path:
+		// burst (0.90) clears base eHP (0.80, +0.05 margin) but a Recuperate (0.40) would reach 1.20 > 0.90.
+		var input = new BardPvPShutdownInput(
+			TargetHasResilience: false,
+			TargetIsCasting: false,
+			TargetThreatensFragileAlly: false,
+			TargetIsBurstWorthy: false,
+			TargetHealthRatio: 0.80f,
+			TargetDistance: 20f,
+			SafeBackstepExists: true,
+			ObjectiveControlNeeded: false,
+			KillSecure: new BardPvPKillSecureFacts(
+				EffectiveHpRatio: 0.80,
+				ExpectedDamageRatio: 0.90,
+				RecuperateRatio: 0.40,
+				TargetCanRecuperate: true,
+				HasGuard: false));
+
+		AssertTrue(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input),
+			"Nocturne should secure a kill a Recuperate would otherwise save");
+	}
+
+	static void SilentNocturneRejectsSecureWhenBurstKillsRegardless()
+	{
+		var input = new BardPvPShutdownInput(
+			TargetHasResilience: false,
+			TargetIsCasting: false,
+			TargetThreatensFragileAlly: false,
+			TargetIsBurstWorthy: false,
+			TargetHealthRatio: 0.80f,
+			TargetDistance: 20f,
+			SafeBackstepExists: true,
+			ObjectiveControlNeeded: false,
+			KillSecure: new BardPvPKillSecureFacts(
+				EffectiveHpRatio: 0.80,
+				ExpectedDamageRatio: 1.20,
+				RecuperateRatio: 0.30,
+				TargetCanRecuperate: true,
+				HasGuard: false));
+
+		AssertFalse(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input),
+			"Nocturne should not spend on a kill that lands through a Recuperate anyway");
+	}
+
+	static void SilentNocturneRejectsSecureWhenBurstCannotKill()
+	{
+		var input = new BardPvPShutdownInput(
+			TargetHasResilience: false,
+			TargetIsCasting: false,
+			TargetThreatensFragileAlly: false,
+			TargetIsBurstWorthy: false,
+			TargetHealthRatio: 0.80f,
+			TargetDistance: 20f,
+			SafeBackstepExists: true,
+			ObjectiveControlNeeded: false,
+			KillSecure: new BardPvPKillSecureFacts(
+				EffectiveHpRatio: 0.80,
+				ExpectedDamageRatio: 0.50,
+				RecuperateRatio: 0.30,
+				TargetCanRecuperate: true,
+				HasGuard: false));
+
+		AssertFalse(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input),
+			"Nocturne should not claim a secure the burst cannot reach");
+	}
+
+	static void SilentNocturneRejectsSecureWhenTargetCannotRecuperate()
+	{
+		var input = new BardPvPShutdownInput(
+			TargetHasResilience: false,
+			TargetIsCasting: false,
+			TargetThreatensFragileAlly: false,
+			TargetIsBurstWorthy: false,
+			TargetHealthRatio: 0.80f,
+			TargetDistance: 20f,
+			SafeBackstepExists: true,
+			ObjectiveControlNeeded: false,
+			KillSecure: new BardPvPKillSecureFacts(
+				EffectiveHpRatio: 0.40,
+				ExpectedDamageRatio: 0.50,
+				RecuperateRatio: 0.30,
+				TargetCanRecuperate: false,
+				HasGuard: false));
+
+		AssertFalse(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input),
+			"Anti-heal secure requires the target to actually have a Recuperate to deny");
+	}
+
+	static void SilentNocturneRejectsSecureWhenEffectiveHpDegenerate()
+	{
+		// A 0-HP / zero effective-HP target mid-frame must not produce a spurious kill-secure.
+		var input = new BardPvPShutdownInput(
+			TargetHasResilience: false,
+			TargetIsCasting: false,
+			TargetThreatensFragileAlly: false,
+			TargetIsBurstWorthy: false,
+			TargetHealthRatio: 0.80f,
+			TargetDistance: 20f,
+			SafeBackstepExists: true,
+			ObjectiveControlNeeded: false,
+			KillSecure: new BardPvPKillSecureFacts(
+				EffectiveHpRatio: 0.0,
+				ExpectedDamageRatio: 0.50,
+				RecuperateRatio: 0.30,
+				TargetCanRecuperate: true,
+				HasGuard: false));
+
+		AssertFalse(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input),
+			"Degenerate zero effective HP must not produce a spurious kill-secure");
+	}
+
+	static void SilentNocturneRejectsSecureWhenTargetInvulnerable()
+	{
+		// Invulnerable target: effective HP is infinite, so no burst can secure. Health 0.80 keeps the
+		// engaged-HP trigger off, isolating the anti-heal path's infinite-eHP rejection.
+		var input = new BardPvPShutdownInput(
+			TargetHasResilience: false,
+			TargetIsCasting: false,
+			TargetThreatensFragileAlly: false,
+			TargetIsBurstWorthy: false,
+			TargetHealthRatio: 0.80f,
+			TargetDistance: 20f,
+			SafeBackstepExists: true,
+			ObjectiveControlNeeded: false,
+			KillSecure: new BardPvPKillSecureFacts(
+				EffectiveHpRatio: double.PositiveInfinity,
+				ExpectedDamageRatio: 0.50,
+				RecuperateRatio: 0.30,
+				TargetCanRecuperate: true,
+				HasGuard: false));
+
+		AssertFalse(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input),
+			"Anti-heal secure must not fire against an invulnerable target");
+	}
+
+	static void SilentNocturneFiresOnEngagedTarget()
+	{
+		var input = new BardPvPShutdownInput(
+			TargetHasResilience: false,
+			TargetIsCasting: false,
+			TargetThreatensFragileAlly: false,
+			TargetIsBurstWorthy: false,
+			TargetHealthRatio: 0.65f,
+			TargetDistance: 20f,
+			SafeBackstepExists: true,
+			ObjectiveControlNeeded: false,
+			KillSecure: default);
+
+		AssertTrue(BardPvPDecisionPolicy.ShouldUseSilentNocturne(input),
+			"Nocturne should be used on an engaged target rather than hoarded");
 	}
 
 	static void RepellingRejectsUnsafeBackstep()
@@ -60,7 +233,6 @@ internal static partial class PvPTestSuite
 			TargetIsCasting: false,
 			TargetThreatensFragileAlly: true,
 			TargetIsBurstWorthy: false,
-			TargetHasLowMp: false,
 			TargetHealthRatio: 1f,
 			TargetDistance: 8f,
 			SafeBackstepExists: false,
@@ -76,7 +248,6 @@ internal static partial class PvPTestSuite
 			TargetIsCasting: false,
 			TargetThreatensFragileAlly: true,
 			TargetIsBurstWorthy: true,
-			TargetHasLowMp: true,
 			TargetHealthRatio: 0.20f,
 			TargetDistance: 8f,
 			SafeBackstepExists: true,
@@ -92,7 +263,6 @@ internal static partial class PvPTestSuite
 			TargetIsCasting: false,
 			TargetThreatensFragileAlly: true,
 			TargetIsBurstWorthy: false,
-			TargetHasLowMp: false,
 			TargetHealthRatio: 1f,
 			TargetDistance: 8f,
 			SafeBackstepExists: true,

@@ -322,6 +322,37 @@ internal static partial class PvPTestSuite
 		AssertEqual(1UL, rankedTargets[0].TargetId, "Bishop targeting should choose the reachable target");
 	}
 
+	static void MachinistTargetPolicyBreaksScoreTiesByHealthThenId()
+	{
+		// Health key: an exact score tie with different health. The 0.25-health target's
+		// extra health pressure (HealthPressure(0.25) = 3.0) equals the 0.50-health target's
+		// health pressure plus Exposed (2.0 + ExposedScore 1.0 = 3.0), so the totals tie.
+		// The lower-health target carries the HIGHER id, proving health beats the id anchor.
+		// MachinistTarget defaults isExposed: true, so the 0.25 target must override it to false.
+		var higherHealthExposed = MachinistTarget(1, healthRatio: 0.50f, currentMp: 10_000);
+		var lowerHealthNotExposed = MachinistTarget(2, healthRatio: 0.25f, currentMp: 10_000, isExposed: false);
+
+		var byHealth = MachinistPvPTargetPolicy.Rank(
+			[higherHealthExposed, lowerHealthNotExposed],
+			MachinistPvPActionIntent.BlazingShot);
+
+		AssertEqual(2UL, byHealth[0].TargetId, "MCH tie should prefer the lower-health target even when it has the higher id");
+		AssertEqual(1UL, byHealth[1].TargetId, "MCH tie should rank the higher-health target second");
+
+		// Id anchor: equal in every score-affecting field including health, so health ties and
+		// the unique TargetId decides. Lower id ranks first. Pass them high-id-first to prove
+		// the comparator reorders rather than echoing input order.
+		var idTwo = MachinistTarget(2, healthRatio: 0.40f, currentMp: 10_000);
+		var idOne = MachinistTarget(1, healthRatio: 0.40f, currentMp: 10_000);
+
+		var byId = MachinistPvPTargetPolicy.Rank(
+			[idTwo, idOne],
+			MachinistPvPActionIntent.BlazingShot);
+
+		AssertEqual(1UL, byId[0].TargetId, "MCH tie with equal health should rank the lower id first");
+		AssertEqual(2UL, byId[1].TargetId, "MCH tie with equal health should rank the higher id second");
+	}
+
 	static void MachinistMarksmanSpiteRejectsGuard()
 	{
 		var input = new MachinistPvPDecisionInput(

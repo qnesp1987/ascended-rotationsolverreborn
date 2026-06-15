@@ -41,8 +41,8 @@ internal readonly record struct MachinistPvPTargetSnapshot(
 
 internal static class MachinistPvPTargetPolicy
 {
-	private const double LowMpScore = 3.0;
-	private const double MediumMpScore = 1.5;
+	private const double HealthPressureWeight = 4.0;
+	private const double MpPressureWeight = 3.0;
 	private const double ObjectiveScore = 1.5;
 	private const int TeamFocusThreshold = 2;
 	private const double AllyFocusScore = 1.25;
@@ -61,36 +61,30 @@ internal static class MachinistPvPTargetPolicy
 		IReadOnlyList<MachinistPvPTargetSnapshot> targets,
 		MachinistPvPActionIntent intent)
 	{
-		var rankedTargets = Rank(targets, intent);
-		return rankedTargets.Count == 0 ? null : rankedTargets[0];
+		return PvPTargetRanking.SelectBest(targets, target => Score(target, intent), CompareScoredTargets);
 	}
 
 	internal static List<MachinistPvPTargetSnapshot> Rank(
 		IReadOnlyList<MachinistPvPTargetSnapshot> targets,
 		MachinistPvPActionIntent intent)
 	{
-		List<(MachinistPvPTargetSnapshot Target, double Score)> scoredTargets = [];
+		return PvPTargetRanking.Rank(targets, target => Score(target, intent), CompareScoredTargets);
+	}
 
-		foreach (var target in targets)
+	private static int CompareScoredTargets(
+		(MachinistPvPTargetSnapshot Target, double Score) left,
+		(MachinistPvPTargetSnapshot Target, double Score) right)
+	{
+		var scoreComparison = right.Score.CompareTo(left.Score);
+		if (scoreComparison != 0)
 		{
-			var score = Score(target, intent);
-			if (double.IsNegativeInfinity(score))
-			{
-				continue;
-			}
-
-			scoredTargets.Add((target, score));
+			return scoreComparison;
 		}
 
-		scoredTargets.Sort((left, right) => right.Score.CompareTo(left.Score));
-
-		List<MachinistPvPTargetSnapshot> rankedTargets = [];
-		foreach (var scoredTarget in scoredTargets)
-		{
-			rankedTargets.Add(scoredTarget.Target);
-		}
-
-		return rankedTargets;
+		var healthComparison = left.Target.HealthRatio.CompareTo(right.Target.HealthRatio);
+		return healthComparison != 0
+			? healthComparison
+			: left.Target.TargetId.CompareTo(right.Target.TargetId);
 	}
 
 	internal static double Score(MachinistPvPTargetSnapshot target, MachinistPvPActionIntent intent)
@@ -195,17 +189,12 @@ internal static class MachinistPvPTargetPolicy
 
 	private static double HealthPressure(float healthRatio)
 	{
-		return (1.0 - Math.Clamp(healthRatio, 0f, 1f)) * 4.0;
+		return PvPScoringFactors.ComputeHealthPressure(healthRatio, HealthPressureWeight);
 	}
 
 	private static double MpPressure(uint currentMp)
 	{
-		if (currentMp <= PvPScoringFactors.LowMp)
-		{
-			return LowMpScore;
-		}
-
-		return currentMp <= PvPScoringFactors.MediumMp ? MediumMpScore : 0.0;
+		return PvPScoringFactors.ComputeMpPressure(currentMp) * MpPressureWeight;
 	}
 
 	private static double GuardCost(MachinistPvPTargetSnapshot target, MachinistPvPActionIntent intent)

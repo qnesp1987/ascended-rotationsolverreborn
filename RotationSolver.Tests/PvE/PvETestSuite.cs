@@ -56,5 +56,17 @@ internal static partial class PvETestSuite
 		new("ttk estimator returns nan for rising hp", TimeToKillEstimatorReturnsNaNForRisingHp),
 		new("ttk estimator high hp yields large estimate for opener", TimeToKillEstimatorHighHpYieldsLargeEstimateForOpener),
 		new("ttk estimator returns nan for nan current hp", TimeToKillEstimatorReturnsNaNForNaNCurrentHp),
+		new("scripted opener terminal state always completes", ScriptedOpenerTerminalStateAlwaysCompletes),
+		new("scripted opener unusable action breaks", ScriptedOpenerUnusableActionBreaks),
+		new("scripted opener gcd breaks while weave pending", ScriptedOpenerGcdBreaksWhileWeavePending),
+		new("scripted opener gcd completes past last index and on absent action", ScriptedOpenerGcdCompletesPastLastIndexAndOnAbsentAction),
+		new("scripted opener gcd advance opens weave window", ScriptedOpenerGcdAdvanceOpensWeaveWindow),
+		new("scripted opener gcd advance without weave jumps step", ScriptedOpenerGcdAdvanceWithoutWeaveJumpsStep),
+		new("scripted opener ability without pending slot returns no action", ScriptedOpenerAbilityWithoutPendingSlotReturnsNoAction),
+		new("scripted opener ability walks early then late then clears", ScriptedOpenerAbilityWalksEarlyThenLateThenClears),
+		new("scripted opener interjection substitutes without advancing", ScriptedOpenerInterjectionSubstitutesWithoutAdvancing),
+		new("scripted opener interjection runs when scripted action absent", ScriptedOpenerInterjectionRunsWhenScriptedActionAbsent),
+		new("scripted opener suppressed scripted ability skips with advanced state", ScriptedOpenerSuppressedScriptedAbilitySkipsWithAdvancedState),
+		new("scripted opener prepull readiness uses script window", ScriptedOpenerPrepullReadinessUsesScriptWindow),
 	];
 }

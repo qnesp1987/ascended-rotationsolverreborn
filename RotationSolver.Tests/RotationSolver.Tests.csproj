@@ -21,6 +21,7 @@
 		<Compile Include="..\RotationSolver.Basic\Actions\PvPTargetSelection\PvPSingleTargetActionOptions.cs" Link="PvPSingleTargetActionOptions.cs" />
 		<Compile Include="..\RotationSolver.Basic\Actions\PvPTargetSelection\PvPSingleTargetActionUse.cs" Link="PvPSingleTargetActionUse.cs" />
 		<Compile Include="..\RotationSolver.Basic\Actions\PvPTargetSelection\PvPScoringFactors.cs" Link="PvPScoringFactors.cs" />
+		<Compile Include="..\RotationSolver.Basic\Actions\PvPTargetSelection\PvPTargetRanking.cs" Link="PvPTargetRanking.cs" />
 		<Compile Include="..\RotationSolver.Basic\Actions\PvPTargetSelection\PvPBurstIntent.cs" Link="PvPBurstIntent.cs" />
 		<Compile Include="..\RotationSolver.Basic\Actions\PvPTargetSelection\PvPBurstRecommendation.cs" Link="PvPBurstRecommendation.cs" />
 		<Compile Include="..\RotationSolver.Basic\Actions\PvPTargetSelection\PvPDamageGate.cs" Link="PvPDamageGate.cs" />
@@ -31,9 +32,17 @@
 		<Compile Include="..\RotationSolver.Basic\Actions\PvPTargetSelection\Factors\MitigationPenalty.cs" Link="MitigationPenalty.cs" />
 		<Compile Include="..\RotationSolver.Basic\Data\PvPModeClassifier.cs" Link="PvPModeClassifier.cs" />
 		<Compile Include="..\RotationSolver.Basic\Rotations\FrontlinePvPRoleActionPolicy.cs" Link="FrontlinePvPRoleActionPolicy.cs" />
+		<Compile Include="..\RotationSolver.Basic\Rotations\Openers\OpenerRequestKind.cs" Link="OpenerRequestKind.cs" />
+		<Compile Include="..\RotationSolver.Basic\Rotations\Openers\OpenerResultKind.cs" Link="OpenerResultKind.cs" />
+		<Compile Include="..\RotationSolver.Basic\Rotations\Openers\OpenerWeaveSlot.cs" Link="OpenerWeaveSlot.cs" />
+		<Compile Include="..\RotationSolver.Basic\Rotations\Openers\OpenerState.cs" Link="OpenerState.cs" />
+		<Compile Include="..\RotationSolver.Basic\Rotations\Openers\OpenerInput.cs" Link="OpenerInput.cs" />
+		<Compile Include="..\RotationSolver.Basic\Rotations\Openers\OpenerResult.cs" Link="OpenerResult.cs" />
+		<Compile Include="..\RotationSolver.Basic\Rotations\Openers\IOpenerScript.cs" Link="IOpenerScript.cs" />
+		<Compile Include="..\RotationSolver.Basic\Rotations\Openers\ScriptedOpenerController.cs" Link="ScriptedOpenerController.cs" />
 		<Compile Include="..\RotationSolver\Commands\AutoOffPolicy.cs" Link="AutoOffPolicy.cs" />
 		<Compile Include="..\RotationSolver\RebornRotations\Ranged\BardAscendedDecisionPolicy.cs" Link="BardAscendedDecisionPolicy.cs" />
-		<Compile Include="..\RotationSolver\RebornRotations\Ranged\BardAscendedOpenerController.cs" Link="BardAscendedOpenerController.cs" />
+		<Compile Include="..\RotationSolver\RebornRotations\Ranged\BardAscendedOpenerScripts.cs" Link="BardAscendedOpenerScripts.cs" />
 		<Compile Include="..\RotationSolver\RebornRotations\PVPRotations\Ranged\BardPvPDecisionPolicy.cs" Link="BardPvPDecisionPolicy.cs" />
 		<Compile Include="..\RotationSolver\RebornRotations\PVPRotations\Ranged\BardPvPOffensiveDecisionPolicy.cs" Link="BardPvPOffensiveDecisionPolicy.cs" />
 		<Compile Include="..\RotationSolver\RebornRotations\PVPRotations\Ranged\BardPvPTargetPolicy.cs" Link="BardPvPTargetPolicy.cs" />

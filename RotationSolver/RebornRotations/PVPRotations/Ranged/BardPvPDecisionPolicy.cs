@@ -2,16 +2,23 @@ using RotationSolver.Basic.Actions.PvPTargetSelection;
 
 namespace RotationSolver.RebornRotations.PVPRotations.Ranged;
 
+internal readonly record struct BardPvPKillSecureFacts(
+	double EffectiveHpRatio,
+	double ExpectedDamageRatio,
+	double RecuperateRatio,
+	bool TargetCanRecuperate,
+	bool HasGuard);
+
 internal readonly record struct BardPvPShutdownInput(
 	bool TargetHasResilience,
 	bool TargetIsCasting,
 	bool TargetThreatensFragileAlly,
 	bool TargetIsBurstWorthy,
-	bool TargetHasLowMp,
 	float TargetHealthRatio,
 	float TargetDistance,
 	bool SafeBackstepExists,
-	bool ObjectiveControlNeeded);
+	bool ObjectiveControlNeeded,
+	BardPvPKillSecureFacts KillSecure = default);
 
 internal readonly record struct BardPvPKillSecureSnapshot(
 	ulong TargetId,
@@ -26,6 +33,14 @@ internal readonly record struct BardPvPKillSecureSnapshot(
 internal static class BardPvPDecisionPolicy
 {
 	private const float KillPressureHealthRatio = 0.55f;
+
+	// Above this health ratio a target is "safe" and not worth a non-securing silence. Subsumes the
+	// former kill-pressure use for Silent Nocturne; Repelling Shot keeps its own KillPressureHealthRatio.
+	private const float EngagedHealthRatio = 0.70f;
+
+	// Buffer (fraction of max HP) requiring the burst to clearly clear base HP before a silence counts
+	// as kill-securing. Tunable.
+	private const double SilenceSecureSafetyMargin = 0.05;
 	private const float PaeanLowHealthRatio = 0.55f;
 	private const float PaeanFocusedHealthRatio = 0.65f;
 	private const float RepellingRangeYalms = 10f;
@@ -36,16 +51,58 @@ internal static class BardPvPDecisionPolicy
 
 	internal static bool ShouldUseSilentNocturne(BardPvPShutdownInput input)
 	{
-		if (input.TargetHasResilience)
+		// Guard grants Silence immunity; Resilience nullifies re-applied CC after a Purify.
+		// Silencing either is wasted.
+		if (input.TargetHasResilience || input.KillSecure.HasGuard)
 		{
 			return false;
 		}
 
-		return input.TargetIsCasting
+		return WouldSilenceSecureKill(input)
 			|| input.TargetThreatensFragileAlly
 			|| input.TargetIsBurstWorthy
-			|| input.TargetHasLowMp
-			|| input.TargetHealthRatio <= KillPressureHealthRatio;
+			|| input.ObjectiveControlNeeded
+			|| input.TargetIsCasting
+			|| input.TargetHealthRatio <= EngagedHealthRatio;
+	}
+
+	/// <summary>
+	/// Silence secures a kill only in the gap where the incoming burst kills the target's base health
+	/// but a Recuperate would otherwise save them. Outside that gap the silence adds no kill value.
+	/// </summary>
+	private static bool WouldSilenceSecureKill(BardPvPShutdownInput input)
+	{
+		var facts = input.KillSecure;
+		if (!facts.TargetCanRecuperate || facts.ExpectedDamageRatio <= 0.0 || facts.EffectiveHpRatio <= 0.0)
+		{
+			return false;
+		}
+
+		// Burst must clearly kill base health (with margin) for a secure to be real.
+		if (facts.EffectiveHpRatio + SilenceSecureSafetyMargin > facts.ExpectedDamageRatio)
+		{
+			return false;
+		}
+
+		// ...but only matters if a Recuperate would have pushed survival past the burst.
+		var effectiveRecuperateRatio = EffectiveRecuperateRatio(input.TargetHealthRatio, facts);
+		return facts.ExpectedDamageRatio < facts.EffectiveHpRatio + effectiveRecuperateRatio;
+	}
+
+	private static double EffectiveRecuperateRatio(float healthRatio, BardPvPKillSecureFacts facts)
+	{
+		if (healthRatio <= 0f || facts.EffectiveHpRatio <= 0.0)
+		{
+			return double.PositiveInfinity;
+		}
+
+		var damageMultiplier = healthRatio / facts.EffectiveHpRatio;
+		if (damageMultiplier <= 0.0 || !double.IsFinite(damageMultiplier))
+		{
+			return double.PositiveInfinity;
+		}
+
+		return facts.RecuperateRatio / damageMultiplier;
 	}
 
 	internal static bool ShouldUseRepellingShot(BardPvPShutdownInput input)

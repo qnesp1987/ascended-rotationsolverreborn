@@ -80,36 +80,14 @@ internal static class BardPvPTargetPolicy
 		IReadOnlyList<BardPvPTargetSnapshot> targets,
 		BardPvPActionIntent intent)
 	{
-		var rankedTargets = Rank(targets, intent);
-		return rankedTargets.Count == 0 ? null : rankedTargets[0];
+		return PvPTargetRanking.SelectBest(targets, target => Score(target, intent), CompareScoredTargets);
 	}
 
 	internal static List<BardPvPTargetSnapshot> Rank(
 		IReadOnlyList<BardPvPTargetSnapshot> targets,
 		BardPvPActionIntent intent)
 	{
-		List<(BardPvPTargetSnapshot Target, double Score)> scoredTargets = [];
-
-		foreach (var target in targets)
-		{
-			var score = Score(target, intent);
-			if (double.IsNegativeInfinity(score))
-			{
-				continue;
-			}
-
-			scoredTargets.Add((target, score));
-		}
-
-		scoredTargets.Sort(CompareScoredTargets);
-
-		List<BardPvPTargetSnapshot> rankedTargets = [];
-		foreach (var scoredTarget in scoredTargets)
-		{
-			rankedTargets.Add(scoredTarget.Target);
-		}
-
-		return rankedTargets;
+		return PvPTargetRanking.Rank(targets, target => Score(target, intent), CompareScoredTargets);
 	}
 
 	internal static double Score(BardPvPTargetSnapshot target, BardPvPActionIntent intent)
@@ -238,7 +216,7 @@ internal static class BardPvPTargetPolicy
 
 	private static double HealthPressure(float healthRatio)
 	{
-		return (1.0 - Math.Clamp(healthRatio, 0f, 1f)) * HealthPressureWeight;
+		return PvPScoringFactors.ComputeHealthPressure(healthRatio, HealthPressureWeight);
 	}
 
 	private static double MpPressure(uint currentMp)

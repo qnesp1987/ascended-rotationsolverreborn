@@ -36,6 +36,15 @@ public static class PvPScoringFactors
 	}
 
 	/// <summary>
+	/// Score missing health linearly because finishing low targets is every ranged
+	/// kit's highest-value pressure; the per-job weight keeps tuning job-local.
+	/// </summary>
+	public static double ComputeHealthPressure(float healthRatio, double weight)
+	{
+		return (1.0 - Math.Clamp(healthRatio, 0f, 1f)) * weight;
+	}
+
+	/// <summary>
 	/// Score objective pressure only from already verified target ids so target selection
 	/// never depends on guessed Crystalline Conflict identifiers.
 	/// </summary>

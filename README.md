@@ -25,6 +25,10 @@ https://raw.githubusercontent.com/jkleinne/ascended-plugins/main/pluginmaster.js
 
 Do not run upstream RSR at the same time. This fork has its own internal plugin identity, but it still registers `/rotation` and `/rsr`, so the two plugins can conflict over chat commands.
 
+### Testing builds
+
+Testing releases are opt-in and never touch stable installs. To receive them, enable `Get plugin testing builds` in `/xlsettings` (the same Experimental tab used above), then check for updates in the plugin installer. You move to a testing build only when one is published; otherwise you stay on the current stable release.
+
 ## Highlights
 
 ### PvPSmart Targeting

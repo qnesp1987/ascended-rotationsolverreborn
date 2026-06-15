@@ -1,3 +1,5 @@
+using RotationSolver.Basic.Rotations.Openers;
+
 namespace RotationSolver.RebornRotations.Ranged;
 
 /// <summary>
@@ -149,11 +151,12 @@ public sealed class BRD_Ascended : BardRotation
 		BurstStarted
 	}
 
-	private BardAscendedOpenerState _openerState = BardAscendedOpenerState.Start(BardAscendedSongTiming.Standard);
+	private OpenerState _openerState = BardAscendedOpenerScripts.StartFor(BardAscendedSongTiming.Standard);
 	private bool _isStrictOpenerActive;
 	private bool _hasStrictOpenerEndedThisCycle;
 	private BardAscendedDirtyStartRecoveryState _dirtyStartRecoveryState;
 	private float _lastCountdownRemainTime;
+	private static BardAscendedOpenerScript OpenerScript => BardAscendedOpenerScripts.For(SongTimings);
 
 	private readonly record struct NormalAoePreview(bool HasResolvedCandidate, int AffectedTargets);
 
@@ -313,7 +316,7 @@ public sealed class BRD_Ascended : BardRotation
 		IAction? act;
 		if (!_isStrictOpenerActive
 			&& SongTimings == BardAscendedSongTiming.AdjustedStandard
-			&& remainTime <= BardAscendedOpenerController.AdjustedStandardPrepullHeartbreakWindowSeconds)
+			&& remainTime <= BardAscendedOpenerScripts.AdjustedStandardPrepullHeartbreakWindowSeconds)
 		{
 			if (ActiveBloodletterVariant.CanUse(out act)) return act;
 		}
@@ -447,7 +450,7 @@ public sealed class BRD_Ascended : BardRotation
 		if (IsCustom) return;
 		if (_hasStrictOpenerEndedThisCycle) return;
 
-		_openerState = BardAscendedOpenerState.Start(SongTimings);
+		_openerState = BardAscendedOpenerScripts.StartFor(SongTimings);
 		_isStrictOpenerActive = true;
 	}
 
@@ -471,7 +474,7 @@ public sealed class BRD_Ascended : BardRotation
 
 	private void ResetStrictOpenerProgress()
 	{
-		_openerState = BardAscendedOpenerState.Start(SongTimings);
+		_openerState = BardAscendedOpenerScripts.StartFor(SongTimings);
 		_isStrictOpenerActive = false;
 		_hasStrictOpenerEndedThisCycle = false;
 	}
@@ -577,25 +580,27 @@ public sealed class BRD_Ascended : BardRotation
 		return SongTimings is BardAscendedSongTiming.Standard or BardAscendedSongTiming.Custom;
 	}
 
-	private BardAscendedOpenerInput BuildOpenerGcdInput()
+	private OpenerInput<BardAscendedOpenerContext> BuildOpenerGcdInput()
 	{
-		return BardAscendedOpenerInput.ForGcd(_openerState);
+		return OpenerInput<BardAscendedOpenerContext>.ForGcd(_openerState);
 	}
 
-	private BardAscendedOpenerInput BuildOpenerAbilityInput()
+	private OpenerInput<BardAscendedOpenerContext> BuildOpenerAbilityInput()
 	{
-		return BardAscendedOpenerInput.ForAbility(
+		return OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			_openerState,
-			pitchPerfectStacks: Repertoire,
-			willGainPitchPerfectStackBeforeNextWeave: EmpyrealArrowPvE.Cooldown.WillHaveOneChargeGCD(1),
-			isEmpyrealArrowNextScriptedAbility: IsNextScriptedOpenerAbility(BardAscendedOpenerAction.EmpyrealArrow),
-			willBurstBuffEndBeforeNextGcd: BurstEndGCD(1) || SongEndAfter(WandRemainTime - DataCenter.CalculatedActionAhead + AnimationLock));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: Repertoire,
+				WillGainPitchPerfectStackBeforeNextWeave: EmpyrealArrowPvE.Cooldown.WillHaveOneChargeGCD(1),
+				IsEmpyrealArrowNextScriptedAbility: IsNextScriptedOpenerAbility(BardAscendedOpenerAction.EmpyrealArrow),
+				WillBurstBuffEndBeforeNextGcd: BurstEndGCD(1) || SongEndAfter(WandRemainTime - DataCenter.CalculatedActionAhead + AnimationLock)));
 	}
 
 	private bool IsNextScriptedOpenerAbility(BardAscendedOpenerAction action)
 	{
-		var request = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(_openerState));
-		return request.Kind == BardAscendedOpenerResultKind.Continue
+		var request = ScriptedOpenerController.GetNextRequest(
+			OpenerInput<BardAscendedOpenerContext>.ForAbility(_openerState, default), OpenerScript);
+		return request.Kind == OpenerResultKind.Continue
 			   && request.Action == action;
 	}
 
@@ -605,7 +610,7 @@ public sealed class BRD_Ascended : BardRotation
 		ResetStrictOpenerIfNeeded();
 		if (!_isStrictOpenerActive) return false;
 
-		var request = BardAscendedOpenerController.GetNextRequest(BuildOpenerGcdInput());
+		var request = ScriptedOpenerController.GetNextRequest(BuildOpenerGcdInput(), OpenerScript);
 		return TryUseRequestedOpenerAction(request, out act);
 	}
 
@@ -615,7 +620,7 @@ public sealed class BRD_Ascended : BardRotation
 		ResetStrictOpenerIfNeeded();
 		if (!_isStrictOpenerActive || !CanWeave) return false;
 
-		var request = BardAscendedOpenerController.GetNextRequest(BuildOpenerAbilityInput());
+		var request = ScriptedOpenerController.GetNextRequest(BuildOpenerAbilityInput(), OpenerScript);
 		return TryUseRequestedOpenerAction(request, out act);
 	}
 
@@ -624,9 +629,9 @@ public sealed class BRD_Ascended : BardRotation
 		act = null;
 		if (!_isStrictOpenerActive) return false;
 
-		var abilityRequest = BardAscendedOpenerController.GetNextRequest(BuildOpenerAbilityInput());
-		var hasPendingPrepull = BardAscendedOpenerController.HasPendingCountdownPrepullRequest(abilityRequest);
-		if (BardAscendedOpenerController.IsCountdownPrepullRequestReady(SongTimings, abilityRequest, remainTime)
+		var abilityRequest = ScriptedOpenerController.GetNextRequest(BuildOpenerAbilityInput(), OpenerScript);
+		var hasPendingPrepull = ScriptedOpenerController.HasPendingCountdownPrepullRequest(in abilityRequest);
+		if (ScriptedOpenerController.IsCountdownPrepullRequestReady(OpenerScript, in abilityRequest, remainTime)
 			&& TryUseRequestedOpenerAction(abilityRequest, out act))
 		{
 			return true;
@@ -635,28 +640,28 @@ public sealed class BRD_Ascended : BardRotation
 		if (hasPendingPrepull) return false;
 		if (remainTime > CountdownDotWindowSeconds) return false;
 
-		var gcdRequest = BardAscendedOpenerController.GetNextRequest(BuildOpenerGcdInput());
+		var gcdRequest = ScriptedOpenerController.GetNextRequest(BuildOpenerGcdInput(), OpenerScript);
 		return TryUseRequestedOpenerAction(gcdRequest, out act);
 	}
 
-	private bool TryUseRequestedOpenerAction(BardAscendedOpenerResult request, out IAction? act)
+	private bool TryUseRequestedOpenerAction(OpenerResult<BardAscendedOpenerAction> request, out IAction? act)
 	{
 		act = null;
 
-		if (request.Kind == BardAscendedOpenerResultKind.Complete
-			|| request.Kind == BardAscendedOpenerResultKind.Break)
+		if (request.Kind == OpenerResultKind.Complete
+			|| request.Kind == OpenerResultKind.Break)
 		{
 			EndStrictOpener();
 			return false;
 		}
 
-		if (request.Kind == BardAscendedOpenerResultKind.Skip)
+		if (request.Kind == OpenerResultKind.Skip)
 		{
 			_openerState = request.NextState;
 			return false;
 		}
 
-		if (request.Kind != BardAscendedOpenerResultKind.Continue) return false;
+		if (request.Kind != OpenerResultKind.Continue) return false;
 
 		if (request.Action == BardAscendedOpenerAction.Potion)
 		{

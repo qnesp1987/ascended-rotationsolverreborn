@@ -272,6 +272,15 @@ internal static partial class PvPTestSuite
 		AssertEqual(0.0, PvPScoringFactors.ComputeMpPressure(6_000), "high MP should not add pressure");
 	}
 
+	static void PvPScoringHealthPressureScalesMissingHealthByWeight()
+	{
+		AssertEqual(0.0, PvPScoringFactors.ComputeHealthPressure(1f, 4.0), "full health should produce no pressure");
+		AssertEqual(4.0, PvPScoringFactors.ComputeHealthPressure(0f, 4.0), "empty health should produce the full weight");
+		AssertEqual(3.0, PvPScoringFactors.ComputeHealthPressure(0.25f, 4.0), "missing health should scale linearly");
+		AssertEqual(4.0, PvPScoringFactors.ComputeHealthPressure(-0.5f, 4.0), "below-zero ratios should clamp to empty");
+		AssertEqual(0.0, PvPScoringFactors.ComputeHealthPressure(1.5f, 4.0), "above-one ratios should clamp to full");
+	}
+
 	static void ObjectivePressureScoresKnownObjectiveTarget()
 	{
 		var targetId = 42UL;

@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using RotationSolver.Basic.Rotations.Openers;
 using RotationSolver.RebornRotations.Ranged;
 
 namespace RotationSolver.Tests;
@@ -1209,212 +1210,240 @@ internal static partial class PvETestSuite
 
 	static void BardAscendedStrictStandardOpenerEmitsScriptedRequests()
 	{
-		var state = BardAscendedOpenerState.Start(BardAscendedSongTiming.Standard);
+		var script = BardAscendedOpenerScripts.For(BardAscendedSongTiming.Standard);
+		var state = BardAscendedOpenerScripts.StartFor(BardAscendedSongTiming.Standard);
 
-		AssertNextGcd(ref state, BardAscendedOpenerAction.Stormbite, expectedStep: 1);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.HeartbreakShot, BardAscendedWeaveSlot.Early, expectedStep: 1);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.TheWanderersMinuet, BardAscendedWeaveSlot.Late, expectedStep: 1);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.CausticBite, expectedStep: 2);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.EmpyrealArrow, BardAscendedWeaveSlot.Early, expectedStep: 2);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.RadiantFinale, BardAscendedWeaveSlot.Late, expectedStep: 2);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 3);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.BattleVoice, BardAscendedWeaveSlot.Early, expectedStep: 3);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.RagingStrikes, BardAscendedWeaveSlot.Late, expectedStep: 3);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 4);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.Barrage, BardAscendedWeaveSlot.Early, expectedStep: 4);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.RefulgentArrow, expectedStep: 5);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.Sidewinder, BardAscendedWeaveSlot.Early, expectedStep: 5);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.RadiantEncore, expectedStep: 6);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.ResonantArrow, expectedStep: 7);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 8);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.EmpyrealArrow, BardAscendedWeaveSlot.Early, expectedStep: 8);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 9);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.IronJaws, expectedStep: 10);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 11);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.PitchPerfect, BardAscendedWeaveSlot.Early, expectedStep: 11, pitchPerfectStacks: 1, willBurstBuffEndBeforeNextGcd: true);
-		AssertComplete(state);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.Stormbite, expectedStep: 1);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.HeartbreakShot, OpenerWeaveSlot.Early, expectedStep: 1);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.TheWanderersMinuet, OpenerWeaveSlot.Late, expectedStep: 1);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.CausticBite, expectedStep: 2);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.EmpyrealArrow, OpenerWeaveSlot.Early, expectedStep: 2);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.RadiantFinale, OpenerWeaveSlot.Late, expectedStep: 2);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 3);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.BattleVoice, OpenerWeaveSlot.Early, expectedStep: 3);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.RagingStrikes, OpenerWeaveSlot.Late, expectedStep: 3);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 4);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.Barrage, OpenerWeaveSlot.Early, expectedStep: 4);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.RefulgentArrow, expectedStep: 5);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.Sidewinder, OpenerWeaveSlot.Early, expectedStep: 5);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.RadiantEncore, expectedStep: 6);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.ResonantArrow, expectedStep: 7);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 8);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.EmpyrealArrow, OpenerWeaveSlot.Early, expectedStep: 8);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 9);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.IronJaws, expectedStep: 10);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 11);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.PitchPerfect, OpenerWeaveSlot.Early, expectedStep: 11, pitchPerfectStacks: 1, willBurstBuffEndBeforeNextGcd: true);
+		AssertComplete(script, state);
 	}
 
 	static void BardAscendedStrictAdjustedOpenerEmitsScriptedRequests()
 	{
-		var state = BardAscendedOpenerState.Start(BardAscendedSongTiming.AdjustedStandard);
+		var script = BardAscendedOpenerScripts.For(BardAscendedSongTiming.AdjustedStandard);
+		var state = BardAscendedOpenerScripts.StartFor(BardAscendedSongTiming.AdjustedStandard);
 
-		AssertNextAbility(ref state, BardAscendedOpenerAction.HeartbreakShot, BardAscendedWeaveSlot.Prepull, expectedStep: 0);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.Stormbite, expectedStep: 1);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.TheWanderersMinuet, BardAscendedWeaveSlot.Early, expectedStep: 1);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.EmpyrealArrow, BardAscendedWeaveSlot.Late, expectedStep: 1);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.CausticBite, expectedStep: 2);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.Potion, BardAscendedWeaveSlot.Early, expectedStep: 2);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.BattleVoice, BardAscendedWeaveSlot.Late, expectedStep: 2);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 3);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.RadiantFinale, BardAscendedWeaveSlot.Early, expectedStep: 3);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.RagingStrikes, BardAscendedWeaveSlot.Late, expectedStep: 3);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 4);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.Barrage, BardAscendedWeaveSlot.Early, expectedStep: 4);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.RefulgentArrow, expectedStep: 5);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.Sidewinder, BardAscendedWeaveSlot.Early, expectedStep: 5);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.RadiantEncore, expectedStep: 6);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.ResonantArrow, expectedStep: 7);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 8);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.EmpyrealArrow, BardAscendedWeaveSlot.Early, expectedStep: 8);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 9);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.IronJaws, expectedStep: 10);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 11);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.PitchPerfect, BardAscendedWeaveSlot.Early, expectedStep: 11, pitchPerfectStacks: 1, willBurstBuffEndBeforeNextGcd: true);
-		AssertComplete(state);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.HeartbreakShot, OpenerWeaveSlot.Prepull, expectedStep: 0);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.Stormbite, expectedStep: 1);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.TheWanderersMinuet, OpenerWeaveSlot.Early, expectedStep: 1);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.EmpyrealArrow, OpenerWeaveSlot.Late, expectedStep: 1);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.CausticBite, expectedStep: 2);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.Potion, OpenerWeaveSlot.Early, expectedStep: 2);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.BattleVoice, OpenerWeaveSlot.Late, expectedStep: 2);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 3);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.RadiantFinale, OpenerWeaveSlot.Early, expectedStep: 3);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.RagingStrikes, OpenerWeaveSlot.Late, expectedStep: 3);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 4);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.Barrage, OpenerWeaveSlot.Early, expectedStep: 4);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.RefulgentArrow, expectedStep: 5);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.Sidewinder, OpenerWeaveSlot.Early, expectedStep: 5);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.RadiantEncore, expectedStep: 6);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.ResonantArrow, expectedStep: 7);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 8);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.EmpyrealArrow, OpenerWeaveSlot.Early, expectedStep: 8);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 9);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.IronJaws, expectedStep: 10);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 11);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.PitchPerfect, OpenerWeaveSlot.Early, expectedStep: 11, pitchPerfectStacks: 1, willBurstBuffEndBeforeNextGcd: true);
+		AssertComplete(script, state);
 	}
 
 	static void BardAscendedStrict369OpenerEmitsScriptedRequests()
 	{
-		var state = BardAscendedOpenerState.Start(BardAscendedSongTiming.Cycle369);
+		var script = BardAscendedOpenerScripts.For(BardAscendedSongTiming.Cycle369);
+		var state = BardAscendedOpenerScripts.StartFor(BardAscendedSongTiming.Cycle369);
 
-		AssertNextGcd(ref state, BardAscendedOpenerAction.Stormbite, expectedStep: 1);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.HeartbreakShot, BardAscendedWeaveSlot.Early, expectedStep: 1);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.TheWanderersMinuet, BardAscendedWeaveSlot.Late, expectedStep: 1);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.CausticBite, expectedStep: 2);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.Potion, BardAscendedWeaveSlot.Early, expectedStep: 2);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.RadiantFinale, BardAscendedWeaveSlot.Late, expectedStep: 2);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 3);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.BattleVoice, BardAscendedWeaveSlot.Early, expectedStep: 3);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 4);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.RagingStrikes, BardAscendedWeaveSlot.Early, expectedStep: 4);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.EmpyrealArrow, BardAscendedWeaveSlot.Late, expectedStep: 4);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.RadiantEncore, expectedStep: 5);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.Barrage, BardAscendedWeaveSlot.Early, expectedStep: 5);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.RefulgentArrow, expectedStep: 6);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.Sidewinder, BardAscendedWeaveSlot.Early, expectedStep: 6);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.ResonantArrow, expectedStep: 7);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 8);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 9);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.IronJaws, expectedStep: 10);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.EmpyrealArrow, BardAscendedWeaveSlot.Early, expectedStep: 10);
-		AssertNextGcd(ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 11);
-		AssertNextAbility(ref state, BardAscendedOpenerAction.PitchPerfect, BardAscendedWeaveSlot.Early, expectedStep: 11, pitchPerfectStacks: 1, willBurstBuffEndBeforeNextGcd: true);
-		AssertComplete(state);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.Stormbite, expectedStep: 1);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.HeartbreakShot, OpenerWeaveSlot.Early, expectedStep: 1);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.TheWanderersMinuet, OpenerWeaveSlot.Late, expectedStep: 1);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.CausticBite, expectedStep: 2);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.Potion, OpenerWeaveSlot.Early, expectedStep: 2);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.RadiantFinale, OpenerWeaveSlot.Late, expectedStep: 2);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 3);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.BattleVoice, OpenerWeaveSlot.Early, expectedStep: 3);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 4);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.RagingStrikes, OpenerWeaveSlot.Early, expectedStep: 4);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.EmpyrealArrow, OpenerWeaveSlot.Late, expectedStep: 4);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.RadiantEncore, expectedStep: 5);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.Barrage, OpenerWeaveSlot.Early, expectedStep: 5);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.RefulgentArrow, expectedStep: 6);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.Sidewinder, OpenerWeaveSlot.Early, expectedStep: 6);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.ResonantArrow, expectedStep: 7);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 8);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 9);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.IronJaws, expectedStep: 10);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.EmpyrealArrow, OpenerWeaveSlot.Early, expectedStep: 10);
+		AssertNextGcd(script, ref state, BardAscendedOpenerAction.FlexibleFiller, expectedStep: 11);
+		AssertNextAbility(script, ref state, BardAscendedOpenerAction.PitchPerfect, OpenerWeaveSlot.Early, expectedStep: 11, pitchPerfectStacks: 1, willBurstBuffEndBeforeNextGcd: true);
+		AssertComplete(script, state);
 	}
 
 	static void BardAscendedStrictOpenerPreservesPitchPerfectSafety()
 	{
-		var safetyState = new BardAscendedOpenerState(
-			BardAscendedSongTiming.Standard,
+		var script = BardAscendedOpenerScripts.For(BardAscendedSongTiming.Standard);
+
+		var safetyState = new OpenerState(
 			Step: 3,
 			NextGcdIndex: 3,
-			NextWeaveSlot: BardAscendedWeaveSlot.Early,
+			NextWeaveSlot: OpenerWeaveSlot.Early,
 			IsTerminal: false);
 
-		var threeStackSafety = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
+		var threeStackSafety = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			safetyState,
-			pitchPerfectStacks: 3,
-			willGainPitchPerfectStackBeforeNextWeave: true));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: 3,
+				WillGainPitchPerfectStackBeforeNextWeave: true,
+				IsEmpyrealArrowNextScriptedAbility: false,
+				WillBurstBuffEndBeforeNextGcd: false)), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Continue, threeStackSafety.Kind, "three stack safety should request Pitch Perfect");
+		AssertEqual(OpenerResultKind.Continue, threeStackSafety.Kind, "three stack safety should request Pitch Perfect");
 		AssertEqual(BardAscendedOpenerAction.PitchPerfect, threeStackSafety.Action, "three stack safety should spend Pitch Perfect");
 		AssertEqual(safetyState, threeStackSafety.NextState, "three stack safety should not advance opener state");
 
-		var twoStackSafety = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
+		var twoStackSafety = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			safetyState,
-			pitchPerfectStacks: 2,
-			isEmpyrealArrowNextScriptedAbility: true));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: 2,
+				WillGainPitchPerfectStackBeforeNextWeave: false,
+				IsEmpyrealArrowNextScriptedAbility: true,
+				WillBurstBuffEndBeforeNextGcd: false)), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Continue, twoStackSafety.Kind, "two stack Empyreal Arrow safety should request Pitch Perfect");
+		AssertEqual(OpenerResultKind.Continue, twoStackSafety.Kind, "two stack Empyreal Arrow safety should request Pitch Perfect");
 		AssertEqual(BardAscendedOpenerAction.PitchPerfect, twoStackSafety.Action, "two stack Empyreal Arrow safety should spend Pitch Perfect");
 		AssertEqual(safetyState, twoStackSafety.NextState, "two stack Empyreal Arrow safety should not advance opener state");
 
-		var twoStackTickSafety = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
+		var twoStackTickSafety = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			safetyState,
-			pitchPerfectStacks: 2,
-			willGainPitchPerfectStackBeforeNextWeave: true));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: 2,
+				WillGainPitchPerfectStackBeforeNextWeave: true,
+				IsEmpyrealArrowNextScriptedAbility: false,
+				WillBurstBuffEndBeforeNextGcd: false)), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Continue, twoStackTickSafety.Kind, "two stack song tick safety should request Pitch Perfect");
+		AssertEqual(OpenerResultKind.Continue, twoStackTickSafety.Kind, "two stack song tick safety should request Pitch Perfect");
 		AssertEqual(BardAscendedOpenerAction.PitchPerfect, twoStackTickSafety.Action, "two stack song tick safety should spend Pitch Perfect");
 		AssertEqual(safetyState, twoStackTickSafety.NextState, "two stack song tick safety should not advance opener state");
 
-		var burstEndSafety = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
+		var burstEndSafety = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			safetyState,
-			pitchPerfectStacks: 1,
-			willBurstBuffEndBeforeNextGcd: true));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: 1,
+				WillGainPitchPerfectStackBeforeNextWeave: false,
+				IsEmpyrealArrowNextScriptedAbility: false,
+				WillBurstBuffEndBeforeNextGcd: true)), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Continue, burstEndSafety.Kind, "burst end safety should request Pitch Perfect");
+		AssertEqual(OpenerResultKind.Continue, burstEndSafety.Kind, "burst end safety should request Pitch Perfect");
 		AssertEqual(BardAscendedOpenerAction.PitchPerfect, burstEndSafety.Action, "burst end safety should spend Pitch Perfect");
 		AssertEqual(safetyState, burstEndSafety.NextState, "burst end safety should not advance opener state");
 
-		var dumpState = new BardAscendedOpenerState(
-			BardAscendedSongTiming.Standard,
+		var dumpState = new OpenerState(
 			Step: 11,
 			NextGcdIndex: 12,
-			NextWeaveSlot: BardAscendedWeaveSlot.Early,
+			NextWeaveSlot: OpenerWeaveSlot.Early,
 			IsTerminal: false);
 
-		var zeroStackDump = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
+		var zeroStackDump = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			dumpState,
-			pitchPerfectStacks: 0));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: 0,
+				WillGainPitchPerfectStackBeforeNextWeave: false,
+				IsEmpyrealArrowNextScriptedAbility: false,
+				WillBurstBuffEndBeforeNextGcd: false)), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Skip, zeroStackDump.Kind, "zero stack Pitch Perfect dump should skip");
-		AssertEqual(BardAscendedOpenerRequestKind.None, zeroStackDump.RequestKind, "skipped dump should not request an action kind");
+		AssertEqual(OpenerResultKind.Skip, zeroStackDump.Kind, "zero stack Pitch Perfect dump should skip");
+		AssertEqual(OpenerRequestKind.None, zeroStackDump.RequestKind, "skipped dump should not request an action kind");
 		AssertEqual(BardAscendedOpenerAction.None, zeroStackDump.Action, "skipped dump should not request an action");
-		AssertEqual(BardAscendedWeaveSlot.None, zeroStackDump.NextState.NextWeaveSlot, "skipped dump should clear the pending weave slot");
+		AssertEqual(OpenerWeaveSlot.None, zeroStackDump.NextState.NextWeaveSlot, "skipped dump should clear the pending weave slot");
 
-		var oneStackHold = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
+		var oneStackHold = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			dumpState,
-			pitchPerfectStacks: 1));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: 1,
+				WillGainPitchPerfectStackBeforeNextWeave: false,
+				IsEmpyrealArrowNextScriptedAbility: false,
+				WillBurstBuffEndBeforeNextGcd: false)), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Skip, oneStackHold.Kind, "one stack Pitch Perfect dump should skip when no burst or song buff is ending");
+		AssertEqual(OpenerResultKind.Skip, oneStackHold.Kind, "one stack Pitch Perfect dump should skip when no burst or song buff is ending");
 		AssertEqual(BardAscendedOpenerAction.None, oneStackHold.Action, "one stack hold should not request Pitch Perfect");
-		AssertEqual(BardAscendedWeaveSlot.None, oneStackHold.NextState.NextWeaveSlot, "one stack hold should clear the pending dump slot");
+		AssertEqual(OpenerWeaveSlot.None, oneStackHold.NextState.NextWeaveSlot, "one stack hold should clear the pending dump slot");
 
-		var oneStackDump = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
+		var oneStackDump = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			dumpState,
-			pitchPerfectStacks: 1,
-			willBurstBuffEndBeforeNextGcd: true));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: 1,
+				WillGainPitchPerfectStackBeforeNextWeave: false,
+				IsEmpyrealArrowNextScriptedAbility: false,
+				WillBurstBuffEndBeforeNextGcd: true)), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Continue, oneStackDump.Kind, "one stack Pitch Perfect dump should continue");
+		AssertEqual(OpenerResultKind.Continue, oneStackDump.Kind, "one stack Pitch Perfect dump should continue");
 		AssertEqual(BardAscendedOpenerAction.PitchPerfect, oneStackDump.Action, "one stack Pitch Perfect dump should request Pitch Perfect");
 	}
 
 	static void BardAscendedStrictOpenerCompletesAndBreaksExplicitly()
 	{
-		var completeState = new BardAscendedOpenerState(
-			BardAscendedSongTiming.Standard,
+		var standardScript = BardAscendedOpenerScripts.For(BardAscendedSongTiming.Standard);
+		var adjustedScript = BardAscendedOpenerScripts.For(BardAscendedSongTiming.AdjustedStandard);
+
+		var completeState = new OpenerState(
 			Step: 12,
 			NextGcdIndex: 12,
-			NextWeaveSlot: BardAscendedWeaveSlot.None,
+			NextWeaveSlot: OpenerWeaveSlot.None,
 			IsTerminal: false);
 
-		var complete = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForGcd(completeState));
+		var complete = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForGcd(completeState), standardScript);
 
-		AssertEqual(BardAscendedOpenerResultKind.Complete, complete.Kind, "exhausted opener should complete");
+		AssertEqual(OpenerResultKind.Complete, complete.Kind, "exhausted opener should complete");
 		AssertTrue(complete.NextState.IsTerminal, "complete result should mark terminal state");
 
-		var blockedGcd = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForGcd(
-			BardAscendedOpenerState.Start(BardAscendedSongTiming.Standard),
-			canUseRequestedAction: false));
+		var blockedGcd = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForGcd(
+			BardAscendedOpenerScripts.StartFor(BardAscendedSongTiming.Standard),
+			canUseRequestedAction: false), standardScript);
 
-		AssertEqual(BardAscendedOpenerResultKind.Break, blockedGcd.Kind, "unusable required GCD should break the opener");
+		AssertEqual(OpenerResultKind.Break, blockedGcd.Kind, "unusable required GCD should break the opener");
 		AssertTrue(blockedGcd.NextState.IsTerminal, "blocked GCD should mark terminal state");
 
-		var pendingPrepull = new BardAscendedOpenerState(
-			BardAscendedSongTiming.AdjustedStandard,
+		var pendingPrepull = new OpenerState(
 			Step: 0,
 			NextGcdIndex: 1,
-			NextWeaveSlot: BardAscendedWeaveSlot.Prepull,
+			NextWeaveSlot: OpenerWeaveSlot.Prepull,
 			IsTerminal: false);
 
-		var prematureGcd = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForGcd(pendingPrepull));
+		var prematureGcd = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForGcd(pendingPrepull), adjustedScript);
 
-		AssertEqual(BardAscendedOpenerResultKind.Break, prematureGcd.Kind, "GCD request should break while a required weave is pending");
+		AssertEqual(OpenerResultKind.Break, prematureGcd.Kind, "GCD request should break while a required weave is pending");
 		AssertTrue(prematureGcd.NextState.IsTerminal, "pending required weave break should mark terminal state");
 	}
 
 	static void BardAscendedStrictOpenerDelaysAdjustedPrepullHeartbreakUntilPull()
 	{
-		var request = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
-			BardAscendedOpenerState.Start(BardAscendedSongTiming.AdjustedStandard)));
+		var script = BardAscendedOpenerScripts.For(BardAscendedSongTiming.AdjustedStandard);
+		var request = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
+			BardAscendedOpenerScripts.StartFor(BardAscendedSongTiming.AdjustedStandard), default), script);
 
 		AssertEqual(BardAscendedOpenerAction.HeartbreakShot, request.Action, "adjusted standard prepull should request Heartbreak Shot");
-		AssertEqual(BardAscendedWeaveSlot.Prepull, request.WeaveSlot, "adjusted standard Heartbreak Shot should be a prepull request");
+		AssertEqual(OpenerWeaveSlot.Prepull, request.WeaveSlot, "adjusted standard Heartbreak Shot should be a prepull request");
 
-		var early = BardAscendedOpenerController.IsCountdownPrepullRequestReady(BardAscendedSongTiming.AdjustedStandard, request, 0.5f);
-		var atPull = BardAscendedOpenerController.IsCountdownPrepullRequestReady(BardAscendedSongTiming.AdjustedStandard, request, 0f);
+		var early = ScriptedOpenerController.IsCountdownPrepullRequestReady(BardAscendedOpenerScripts.For(BardAscendedSongTiming.AdjustedStandard), in request, 0.5f);
+		var atPull = ScriptedOpenerController.IsCountdownPrepullRequestReady(BardAscendedOpenerScripts.For(BardAscendedSongTiming.AdjustedStandard), in request, 0f);
 
 		AssertFalse(early, "adjusted standard prepull Heartbreak Shot should not fire before countdown zero");
 		AssertTrue(atPull, "adjusted standard prepull Heartbreak Shot should fire at countdown zero");
@@ -1422,12 +1451,13 @@ internal static partial class PvETestSuite
 
 	static void BardAscendedStrictOpenerHoldsPullGcdUntilAdjustedPrepullHeartbreakReady()
 	{
-		var request = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
-			BardAscendedOpenerState.Start(BardAscendedSongTiming.AdjustedStandard)));
+		var script = BardAscendedOpenerScripts.For(BardAscendedSongTiming.AdjustedStandard);
+		var request = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
+			BardAscendedOpenerScripts.StartFor(BardAscendedSongTiming.AdjustedStandard), default), script);
 
-		AssertTrue(BardAscendedOpenerController.HasPendingCountdownPrepullRequest(request), "adjusted standard Heartbreak Shot should remain pending before pull");
+		AssertTrue(ScriptedOpenerController.HasPendingCountdownPrepullRequest(in request), "adjusted standard Heartbreak Shot should remain pending before pull");
 		AssertFalse(
-			BardAscendedOpenerController.IsCountdownPrepullRequestReady(BardAscendedSongTiming.AdjustedStandard, request, 0.05f),
+			ScriptedOpenerController.IsCountdownPrepullRequestReady(BardAscendedOpenerScripts.For(BardAscendedSongTiming.AdjustedStandard), in request, 0.05f),
 			"adjusted standard Heartbreak Shot should not be ready in the final pre-pull DoT window");
 
 		var source = StripSourceComments(File.ReadAllText(RepositoryPath("RotationSolver", "RebornRotations", "Ranged", "BRD_Ascended.cs")));
@@ -1435,29 +1465,30 @@ internal static partial class PvETestSuite
 
 		AssertSourceMatches(
 			openerCountdownAction,
-			@"\bvar\s+hasPendingPrepull\s*=\s*BardAscendedOpenerController\.HasPendingCountdownPrepullRequest\s*\(\s*abilityRequest\s*\)\s*;.*?IsCountdownPrepullRequestReady\s*\(\s*SongTimings\s*,\s*abilityRequest\s*,\s*remainTime\s*\).*?TryUseRequestedOpenerAction\s*\(\s*abilityRequest\s*,\s*out\s+act\s*\).*?\bif\s*\(\s*hasPendingPrepull\s*\)\s*return\s+false\s*;.*?\bvar\s+gcdRequest\s*=",
+			@"\bvar\s+hasPendingPrepull\s*=\s*ScriptedOpenerController\.HasPendingCountdownPrepullRequest\s*\(\s*in\s+abilityRequest\s*\)\s*;.*?IsCountdownPrepullRequestReady\s*\(\s*OpenerScript\s*,\s*in\s+abilityRequest\s*,\s*remainTime\s*\).*?TryUseRequestedOpenerAction\s*\(\s*abilityRequest\s*,\s*out\s+act\s*\).*?\bif\s*\(\s*hasPendingPrepull\s*\)\s*return\s+false\s*;.*?\bvar\s+gcdRequest\s*=",
 			"BRD Ascended should not request pull GCDs while a prepull opener ability is still pending");
 	}
 
-	static void AssertNextGcd(ref BardAscendedOpenerState state, BardAscendedOpenerAction expectedAction, int expectedStep)
+	static void AssertNextGcd(BardAscendedOpenerScript script, ref OpenerState state, BardAscendedOpenerAction expectedAction, int expectedStep)
 	{
 		AssertEqual(expectedStep, state.Step, "opener GCD request should be emitted at the expected step");
 
-		var result = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForGcd(state));
+		var result = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForGcd(state), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Continue, result.Kind, "opener GCD should continue");
-		AssertEqual(BardAscendedOpenerRequestKind.Gcd, result.RequestKind, "opener GCD should request a GCD");
+		AssertEqual(OpenerResultKind.Continue, result.Kind, "opener GCD should continue");
+		AssertEqual(OpenerRequestKind.Gcd, result.RequestKind, "opener GCD should request a GCD");
 		AssertEqual(expectedAction, result.Action, "opener GCD should request the scripted action");
-		AssertEqual(BardAscendedWeaveSlot.None, result.WeaveSlot, "opener GCD should not occupy a weave slot");
+		AssertEqual(OpenerWeaveSlot.None, result.WeaveSlot, "opener GCD should not occupy a weave slot");
 		AssertFalse(result.NextState.IsTerminal, "opener GCD should leave the opener active");
 
 		state = result.NextState;
 	}
 
 	static void AssertNextAbility(
-		ref BardAscendedOpenerState state,
+		BardAscendedOpenerScript script,
+		ref OpenerState state,
 		BardAscendedOpenerAction expectedAction,
-		BardAscendedWeaveSlot expectedSlot,
+		OpenerWeaveSlot expectedSlot,
 		int expectedStep,
 		int pitchPerfectStacks = 0,
 		bool willBurstBuffEndBeforeNextGcd = false)
@@ -1465,13 +1496,16 @@ internal static partial class PvETestSuite
 		AssertEqual(expectedStep, state.Step, "opener ability request should be emitted at the expected step");
 		AssertEqual(expectedSlot, state.NextWeaveSlot, "opener ability request should be emitted in the expected weave slot");
 
-		var result = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForAbility(
+		var result = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForAbility(
 			state,
-			pitchPerfectStacks: pitchPerfectStacks,
-			willBurstBuffEndBeforeNextGcd: willBurstBuffEndBeforeNextGcd));
+			new BardAscendedOpenerContext(
+				PitchPerfectStacks: pitchPerfectStacks,
+				WillGainPitchPerfectStackBeforeNextWeave: false,
+				IsEmpyrealArrowNextScriptedAbility: false,
+				WillBurstBuffEndBeforeNextGcd: willBurstBuffEndBeforeNextGcd)), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Continue, result.Kind, "opener ability should continue");
-		AssertEqual(BardAscendedOpenerRequestKind.Ability, result.RequestKind, "opener ability should request an ability");
+		AssertEqual(OpenerResultKind.Continue, result.Kind, "opener ability should continue");
+		AssertEqual(OpenerRequestKind.Ability, result.RequestKind, "opener ability should request an ability");
 		AssertEqual(expectedAction, result.Action, "opener ability should request the scripted action");
 		AssertEqual(expectedSlot, result.WeaveSlot, "opener ability should preserve the requested weave slot");
 		AssertFalse(result.NextState.IsTerminal, "opener ability should leave the opener active");
@@ -1479,11 +1513,11 @@ internal static partial class PvETestSuite
 		state = result.NextState;
 	}
 
-	static void AssertComplete(BardAscendedOpenerState state)
+	static void AssertComplete(BardAscendedOpenerScript script, OpenerState state)
 	{
-		var result = BardAscendedOpenerController.GetNextRequest(BardAscendedOpenerInput.ForGcd(state));
+		var result = ScriptedOpenerController.GetNextRequest(OpenerInput<BardAscendedOpenerContext>.ForGcd(state), script);
 
-		AssertEqual(BardAscendedOpenerResultKind.Complete, result.Kind, "opener should complete after the final scripted GCD");
+		AssertEqual(OpenerResultKind.Complete, result.Kind, "opener should complete after the final scripted GCD");
 		AssertTrue(result.NextState.IsTerminal, "opener complete result should mark terminal state");
 	}
 
@@ -1517,7 +1551,7 @@ internal static partial class PvETestSuite
 			"BRD Ascended should reset stale active opener state for a fresh countdown before starting prepull actions");
 		AssertSourceMatches(
 			openerCountdownAction,
-			@"\bvar\s+abilityRequest\s*=\s*BardAscendedOpenerController\.GetNextRequest\s*\(\s*BuildOpenerAbilityInput\s*\(\s*\)\s*\)\s*;.*?BardAscendedOpenerController\.IsCountdownPrepullRequestReady\s*\(\s*SongTimings\s*,\s*abilityRequest\s*,\s*remainTime\s*\).*?TryUseRequestedOpenerAction\s*\(\s*abilityRequest\s*,\s*out\s+act\s*\).*?\bvar\s+gcdRequest\s*=\s*BardAscendedOpenerController\.GetNextRequest\s*\(\s*BuildOpenerGcdInput\s*\(\s*\)\s*\)\s*;.*?TryUseRequestedOpenerAction\s*\(\s*gcdRequest\s*,\s*out\s+act\s*\)",
+			@"\bvar\s+abilityRequest\s*=\s*ScriptedOpenerController\.GetNextRequest\s*\(\s*BuildOpenerAbilityInput\s*\(\s*\)\s*,\s*OpenerScript\s*\)\s*;.*?ScriptedOpenerController\.IsCountdownPrepullRequestReady\s*\(\s*OpenerScript\s*,\s*in\s+abilityRequest\s*,\s*remainTime\s*\).*?TryUseRequestedOpenerAction\s*\(\s*abilityRequest\s*,\s*out\s+act\s*\).*?\bvar\s+gcdRequest\s*=\s*ScriptedOpenerController\.GetNextRequest\s*\(\s*BuildOpenerGcdInput\s*\(\s*\)\s*,\s*OpenerScript\s*\)\s*;.*?TryUseRequestedOpenerAction\s*\(\s*gcdRequest\s*,\s*out\s+act\s*\)",
 			"BRD Ascended countdown should advance strict opener state for pull GCDs instead of using legacy DoT fallback");
 		AssertSourceMatches(
 			countDownAction,
@@ -1533,7 +1567,7 @@ internal static partial class PvETestSuite
 			"BRD Ascended should reserve non-standard opener potion slots for the strict opener script");
 		AssertSourceMatches(
 			countDownAction,
-			@"!\s*_isStrictOpenerActive\s*&&\s*SongTimings\s*==\s*BardAscendedSongTiming\.AdjustedStandard\s*&&\s*remainTime\s*<=\s*BardAscendedOpenerController\.AdjustedStandardPrepullHeartbreakWindowSeconds",
+			@"!\s*_isStrictOpenerActive\s*&&\s*SongTimings\s*==\s*BardAscendedSongTiming\.AdjustedStandard\s*&&\s*remainTime\s*<=\s*BardAscendedOpenerScripts\.AdjustedStandardPrepullHeartbreakWindowSeconds",
 			"BRD Ascended should gate legacy adjusted prepull Heartbreak fallback off during strict opener mode");
 		AssertSourceMatches(
 			countDownAction,
@@ -1623,7 +1657,7 @@ internal static partial class PvETestSuite
 
 		AssertSourceMatches(
 			source,
-			@"\bprivate\s+BardAscendedOpenerState\s+_openerState\s*=\s*BardAscendedOpenerState\.Start\s*\(\s*BardAscendedSongTiming\.Standard\s*\)\s*;",
+			@"\bprivate\s+OpenerState\s+_openerState\s*=\s*BardAscendedOpenerScripts\.StartFor\s*\(\s*BardAscendedSongTiming\.Standard\s*\)\s*;",
 			"BRD Ascended should own mutable opener state for the active combat cycle");
 		AssertSourceMatches(
 			source,
@@ -1655,11 +1689,11 @@ internal static partial class PvETestSuite
 			"BRD Ascended should apply opener state only after requested action resolution and CanUse succeed");
 		AssertSourceMatches(
 			openerAttempt,
-			@"\bif\s*\(\s*request\.Kind\s*==\s*BardAscendedOpenerResultKind\.Skip\s*\)\s*\{.*?_openerState\s*=\s*request\.NextState\s*;.*?return\s+false\s*;.*?\}",
+			@"\bif\s*\(\s*request\.Kind\s*==\s*OpenerResultKind\.Skip\s*\)\s*\{.*?_openerState\s*=\s*request\.NextState\s*;.*?return\s+false\s*;.*?\}",
 			"BRD Ascended should advance opener state when the controller skips an optional slot");
 		AssertSourceMatches(
 			openerAttempt,
-			@"\bif\s*\(\s*request\.Kind\s*==\s*BardAscendedOpenerResultKind\.Complete\s*\|\|\s*request\.Kind\s*==\s*BardAscendedOpenerResultKind\.Break\s*\)\s*\{.*?EndStrictOpener\s*\(\s*\)\s*;.*?return\s+false\s*;.*?\}",
+			@"\bif\s*\(\s*request\.Kind\s*==\s*OpenerResultKind\.Complete\s*\|\|\s*request\.Kind\s*==\s*OpenerResultKind\.Break\s*\)\s*\{.*?EndStrictOpener\s*\(\s*\)\s*;.*?return\s+false\s*;.*?\}",
 			"BRD Ascended should disable opener requests after completion or break");
 		AssertSourceMatches(
 			refreshCombatCycle,

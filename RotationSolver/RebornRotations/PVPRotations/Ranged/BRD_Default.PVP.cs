@@ -44,6 +44,13 @@ public sealed class BRD_DefaultPvP : BardRotation
 	private const double EncoreOfLightPotency = 10_000.0;
 	private const double EagleEyeShotPotency = 12_000.0;
 
+	// PvP Recuperate restores a fixed amount; the codebase commits to 16,000 (matches MCH's
+	// RecuperatePotency). Exact figure is an assumption; the anti-heal gap does not hinge on it.
+	private const double RecuperateHealPotency = 16_000.0;
+
+	// PvP Recuperate MP cost. Sources vary (2,000-2,500); tunable, not load-bearing.
+	private const double RecuperateMpCost = 2_000.0;
+
 	private readonly record struct PaeanCandidate(IBattleChara Target, float Score);
 
 	private enum PaeanCastIntent
@@ -389,7 +396,8 @@ public sealed class BRD_DefaultPvP : BardRotation
 
 		if (SilentNocturnePvP.CanUse(out action))
 		{
-			var input = BuildShutdownInput(SilentNocturnePvP, safeBackstepExists: true);
+			var facts = BuildKillSecureFacts(SilentNocturnePvP.Target.Target);
+			var input = BuildShutdownInput(SilentNocturnePvP, safeBackstepExists: true, facts);
 			if (BardPvPDecisionPolicy.ShouldUseSilentNocturne(input))
 			{
 				return true;
@@ -463,19 +471,58 @@ public sealed class BRD_DefaultPvP : BardRotation
 			StatusID.MiracleOfNature);
 	}
 
-	private static BardPvPShutdownInput BuildShutdownInput(IBaseAction action, bool safeBackstepExists)
+	private static BardPvPShutdownInput BuildShutdownInput(
+		IBaseAction action,
+		bool safeBackstepExists,
+		BardPvPKillSecureFacts killSecureFacts = default)
 	{
 		var target = action.Target.Target;
 		return new BardPvPShutdownInput(
 			TargetHasResilience: target.HasStatus(false, StatusID.Resilience),
-			TargetIsCasting: target.IsCasting && target.IsCastInterruptible,
+			TargetIsCasting: target.IsCasting,
 			TargetThreatensFragileAlly: TargetThreatensProtectedAlly(target),
 			TargetIsBurstWorthy: IsBurstWorthy(target),
-			TargetHasLowMp: target.CurrentMp <= PvPScoringFactors.MediumMp,
 			TargetHealthRatio: target.GetHealthRatio(),
 			TargetDistance: target.DistanceToPlayer(),
 			SafeBackstepExists: safeBackstepExists,
-			ObjectiveControlNeeded: IsObjectiveRelevantTarget(target));
+			ObjectiveControlNeeded: IsObjectiveRelevantTarget(target),
+			KillSecure: killSecureFacts);
+	}
+
+	private BardPvPKillSecureFacts BuildKillSecureFacts(IBattleChara target)
+	{
+		if (target.MaxHp == 0)
+		{
+			return default;
+		}
+
+		var database = PvPMitigationDatabaseProvider.Current;
+		var effectiveHp = EffectiveHpCalculator.Compute(target, database);
+		var effectiveHpRatio = double.IsPositiveInfinity(effectiveHp)
+			? double.PositiveInfinity
+			: effectiveHp / target.MaxHp;
+
+		return new BardPvPKillSecureFacts(
+			EffectiveHpRatio: effectiveHpRatio,
+			ExpectedDamageRatio: BestAvailableBurstPotency() / target.MaxHp,
+			RecuperateRatio: RecuperateHealPotency / target.MaxHp,
+			TargetCanRecuperate: target.CurrentMp >= RecuperateMpCost,
+			HasGuard: target.HasStatus(false, StatusID.Guard));
+	}
+
+	// Best immediately-available Bard damaging GCD: Pitch Perfect when Repertoire is up else Powerful
+	// Shot, raised by Blast Arrow (when its window is up) or Apex Arrow (charged, no Blast window).
+	private double BestAvailableBurstPotency()
+	{
+		var spammable = StatusHelper.PlayerHasStatus(true, StatusID.Repertoire)
+			? PitchPerfectPotency
+			: PowerfulShotPotency;
+
+		var hasBlastWindow = StatusHelper.PlayerHasStatus(true, StatusID.BlastArrowReady_3142);
+		var blast = hasBlastWindow ? BlastArrowPotency : 0.0;
+		var apex = !hasBlastWindow && ApexArrowPvP.Cooldown.HasOneCharge ? ApexArrowPotency : 0.0;
+
+		return Math.Max(spammable, Math.Max(blast, apex));
 	}
 
 	private static bool TargetThreatensProtectedAlly(IBattleChara target)
