@@ -255,6 +255,53 @@ internal static partial class PvETestSuite
 			"BRD Ascended full burst should not wait on the non damage Radiant Finale status");
 	}
 
+	static void BardBuffStatusProvideChecksOwnStatusOnly()
+	{
+		var bardSource = StripSourceComments(File.ReadAllText(RepositoryPath(
+			"RotationSolver.Basic",
+			"Rotations",
+			"Basic",
+			"BardRotation.cs")));
+		var battleVoice = ExtractMethodBody(bardSource, "void ModifyBattleVoicePvE");
+		var radiantFinale = ExtractMethodBody(bardSource, "void ModifyRadiantFinalePvE");
+
+		AssertSourceMatches(
+			battleVoice,
+			@"setting\.StatusFromSelf\s*=\s*true\s*;",
+			"Battle Voice must only treat the bard's own status as already provided");
+		AssertSourceDoesNotMatch(
+			battleVoice,
+			@"StatusFromSelf\s*=\s*false",
+			"another bard's Battle Voice must not block our own cast");
+		AssertSourceMatches(
+			radiantFinale,
+			@"setting\.StatusFromSelf\s*=\s*true\s*;",
+			"Radiant Finale must only treat the bard's own status as already provided");
+		AssertSourceDoesNotMatch(
+			radiantFinale,
+			@"StatusFromSelf\s*=\s*false",
+			"another bard's Radiant Finale must not block our own cast");
+	}
+
+	static void BardAscendedStrictOpenerRequiresBurstToggle()
+	{
+		var source = StripSourceComments(File.ReadAllText(RepositoryPath(
+			"RotationSolver",
+			"RebornRotations",
+			"Ranged",
+			"BRD_Ascended.cs")));
+		var startStrictOpener = ExtractMethodBody(source, "void StartStrictOpener");
+
+		AssertSourceMatches(
+			startStrictOpener,
+			@"if\s*\(\s*!\s*CanBurst\s*\)\s*return\s*;",
+			"strict opener must not start while the burst toggle is disabled");
+		AssertSourceMatches(
+			startStrictOpener,
+			@"if\s*\(\s*!\s*CanBurst\s*\)\s*return\s*;.*?_isStrictOpenerActive\s*=\s*true\s*;",
+			"the burst gate must run before the opener activates");
+	}
+
 	static void BardAscendedApexSpendsDuringBurstAndMageBalladWindows()
 	{
 		AssertTrue(

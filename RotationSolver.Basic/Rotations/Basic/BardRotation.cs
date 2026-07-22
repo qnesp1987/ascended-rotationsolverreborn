@@ -254,7 +254,10 @@ public partial class BardRotation
 	static partial void ModifyBattleVoicePvE(ref ActionSetting setting)
 	{
 		setting.StatusProvide = [StatusID.BattleVoice];
-		setting.StatusFromSelf = false;
+		// Deliberate upstream divergence (upstream sets false): only our own
+		// Battle Voice should block a re-cast; another bard's status on us
+		// must not suppress our burst.
+		setting.StatusFromSelf = true;
 		setting.TargetType = TargetType.Self;
 		setting.UnlockedByQuestID = 66626;
 		setting.CreateConfig = () => new ActionConfig()
@@ -412,7 +415,10 @@ public partial class BardRotation
 			return false;
 		};
 		setting.StatusProvide = [StatusID.RadiantFinale_2964, StatusID.RadiantEncoreReady];
-		setting.StatusFromSelf = false;
+		// Deliberate upstream divergence (upstream sets false): only our own
+		// Radiant Finale should block a re-cast; another bard's status on us
+		// must not suppress our burst.
+		setting.StatusFromSelf = true;
 		setting.TargetType = TargetType.Self;
 		setting.CreateConfig = () => new ActionConfig()
 		{

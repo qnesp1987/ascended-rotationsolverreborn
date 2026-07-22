@@ -449,6 +449,10 @@ public sealed class BRD_Ascended : BardRotation
 	{
 		if (IsCustom) return;
 		if (_hasStrictOpenerEndedThisCycle) return;
+		// The opener exists to align the burst window; with the burst toggle off
+		// there is nothing to align, so the normal priority flow (which holds
+		// buffs) runs instead of the scripted opener.
+		if (!CanBurst) return;
 
 		_openerState = BardAscendedOpenerScripts.StartFor(SongTimings);
 		_isStrictOpenerActive = true;

@@ -47,6 +47,8 @@ internal static partial class PvETestSuite
 		new("bard ascended runtime enters strict opener before priority abilities", BardAscendedRuntimeEntersStrictOpenerBeforePriorityAbilities),
 		new("bard ascended bloodletter uses liberal spending with burst reservation", BardAscendedBloodletterUsesLiberalSpendingWithBurstReservation),
 		new("bard ascended runtime advances strict opener only after action success", BardAscendedRuntimeAdvancesStrictOpenerOnlyAfterActionSuccess),
+		new("bard buff status provide checks own status only", BardBuffStatusProvideChecksOwnStatusOnly),
+		new("bard ascended strict opener requires burst toggle", BardAscendedStrictOpenerRequiresBurstToggle),
 		new("ttk estimator matches constant kill rate", TimeToKillEstimatorMatchesConstantKillRate),
 		new("ttk estimator tracks steep recent rate below dying threshold", TimeToKillEstimatorTracksSteepRecentRateBelowDyingThreshold),
 		new("ttk estimator ignores samples outside window", TimeToKillEstimatorIgnoresSamplesOutsideWindow),
